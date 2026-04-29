@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rock Paper Scissors Lizard Spock — Bazinga! (Deutsch)</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
+<style>
+:root{--bg:#0a0a14;--surface:#111122;--surface2:#161630;--accent:#00d4ff;--accent2:#ff6b35;--green:#39ff14;--red:#ff2244;--gold:#ffd700;--purple:#9b59b6;--text:#e8e8ff;--subtext:#7788aa;--border:rgba(0,212,255,.2);}
+*{margin:0;padding:0;box-sizing:border-box;}html{font-size:16px;}
+body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-height:100vh;overflow-x:hidden;
+  background-image:radial-gradient(ellipse at 20% 20%,rgba(0,212,255,.06) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(155,89,182,.07) 0%,transparent 50%),radial-gradient(ellipse at 50% 100%,rgba(255,107,53,.04) 0%,transparent 50%);}
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(circle,#fff 1px,transparent 1px) 10px 20px/200px 200px,radial-gradient(circle,rgba(255,255,255,.6) 1px,transparent 1px) 80px 90px/300px 300px,radial-gradient(circle,rgba(0,212,255,.4) 1px,transparent 1px) 50px 150px/250px 250px;
+  animation:twinkle 8s ease-in-out infinite alternate;}
+@keyframes twinkle{0%{opacity:.5}100%{opacity:1}}
+.lang-bar{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:flex-end;padding:8px 16px;background:rgba(10,10,20,.88);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);}
+.lang-bar label{font-family:"Share Tech Mono",monospace;font-size:10px;color:var(--subtext);letter-spacing:2px;margin-right:8px;text-transform:uppercase;}
+.lang-select{background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--accent);font-family:"Share Tech Mono",monospace;font-size:12px;padding:4px 28px 4px 10px;cursor:pointer;outline:none;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2300d4ff'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;}
+.lang-select:focus{border-color:var(--accent);}.lang-select option{background:#111122;color:var(--text);}
+.screen{display:none;}.screen.active{display:block;}
+.container{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:72px 16px 40px;}
+.header{text-align:center;padding:16px 0;}
+.logo-top{font-family:"Share Tech Mono",monospace;font-size:11px;color:var(--accent);letter-spacing:4px;text-transform:uppercase;margin-bottom:6px;opacity:.7;}
+.logo-title{font-family:"Orbitron",sans-serif;font-size:clamp(20px,4.5vw,38px);font-weight:900;letter-spacing:2px;line-height:1.15;background:linear-gradient(135deg,var(--accent),var(--purple),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 20px rgba(0,212,255,.4));}
+.logo-sub{font-family:"Share Tech Mono",monospace;font-size:clamp(11px,2.2vw,15px);color:var(--gold);letter-spacing:5px;margin-top:5px;}
+.sheldon-quote{margin:12px auto 0;max-width:560px;font-size:11.5px;color:var(--subtext);font-style:italic;line-height:1.5;padding:8px 14px;border-left:2px solid var(--accent);text-align:left;background:rgba(0,212,255,.04);border-radius:0 6px 6px 0;}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0;}
+@media(max-width:480px){.mode-grid{grid-template-columns:1fr;gap:12px;}}
+.mode-card{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:24px 16px;text-align:center;cursor:pointer;transition:all .25s;user-select:none;}
+.mode-card:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 12px 40px rgba(0,212,255,.15);}
+.mode-card.online-card:hover{border-color:var(--purple);box-shadow:0 12px 40px rgba(155,89,182,.2);}
+.mode-card:active{transform:scale(.97);}
+.mode-icon{font-size:48px;margin-bottom:12px;display:block;}
+.mode-title{font-family:"Orbitron",sans-serif;font-size:clamp(12px,2.5vw,15px);font-weight:900;color:var(--accent);margin-bottom:8px;}
+.mode-card.online-card .mode-title{color:var(--purple);}
+.mode-desc{font-size:clamp(11px,1.8vw,13px);color:var(--subtext);line-height:1.5;}
+.mode-badge{display:inline-block;margin-top:10px;font-family:"Share Tech Mono",monospace;font-size:9px;letter-spacing:2px;padding:3px 10px;border-radius:20px;background:rgba(0,212,255,.1);color:var(--accent);border:1px solid rgba(0,212,255,.2);}
+.mode-card.online-card .mode-badge{background:rgba(155,89,182,.1);color:var(--purple);border-color:rgba(155,89,182,.25);}
+.lobby-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px 20px;margin:16px 0;}
+.lobby-title{font-family:"Orbitron",sans-serif;font-size:13px;font-weight:900;letter-spacing:2px;margin-bottom:16px;text-align:center;color:var(--accent);}
+.lobby-tabs{display:flex;margin-bottom:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.lobby-tab{flex:1;padding:9px 6px;background:transparent;border:none;cursor:pointer;font-family:"Orbitron",sans-serif;font-size:clamp(9px,2vw,11px);font-weight:700;letter-spacing:1px;color:var(--subtext);transition:all .2s;text-transform:uppercase;}
+.lobby-tab.active{background:rgba(0,212,255,.12);color:var(--accent);}
+.room-code-display{background:var(--surface2);border:2px solid rgba(0,212,255,.3);border-radius:12px;padding:18px;text-align:center;margin-bottom:14px;}
+.room-code-label{font-family:"Share Tech Mono",monospace;font-size:10px;letter-spacing:3px;color:var(--subtext);text-transform:uppercase;margin-bottom:8px;}
+.room-code-value{font-family:"Orbitron",sans-serif;font-size:clamp(26px,7vw,42px);font-weight:900;letter-spacing:6px;color:var(--gold);text-shadow:0 0 20px rgba(255,215,0,.4);}
+.room-code-hint{font-family:"Share Tech Mono",monospace;font-size:10px;color:var(--subtext);margin-top:8px;line-height:1.6;}
+.copy-btn{background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.3);border-radius:8px;color:var(--accent);font-family:"Share Tech Mono",monospace;font-size:11px;letter-spacing:2px;padding:9px 20px;cursor:pointer;transition:all .2s;width:100%;}
+.copy-btn:hover{background:rgba(0,212,255,.2);}
+.join-input{width:100%;padding:13px 16px;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:"Orbitron",sans-serif;font-size:clamp(20px,5vw,28px);font-weight:900;letter-spacing:6px;text-align:center;text-transform:uppercase;transition:border-color .2s;outline:none;margin-bottom:12px;}
+.join-input:focus{border-color:var(--purple);}
+.join-input::placeholder{font-size:12px;letter-spacing:2px;color:var(--subtext);font-weight:400;}
+.join-btn{width:100%;padding:13px;background:linear-gradient(135deg,rgba(155,89,182,.2),rgba(0,212,255,.15));border:1.5px solid var(--purple);border-radius:10px;color:var(--purple);font-family:"Orbitron",sans-serif;font-size:12px;font-weight:900;letter-spacing:2px;cursor:pointer;transition:all .2s;text-transform:uppercase;}
+.join-btn:hover{background:linear-gradient(135deg,rgba(155,89,182,.3),rgba(0,212,255,.2));box-shadow:0 8px 24px rgba(155,89,182,.25);}
+.status-bar{display:flex;align-items:center;gap:10px;padding:9px 14px;background:var(--surface2);border-radius:8px;margin-bottom:14px;font-family:"Share Tech Mono",monospace;font-size:11px;letter-spacing:1px;}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--subtext);flex-shrink:0;transition:background .3s;}
+.status-dot.connecting{background:var(--gold);animation:blink 1s infinite;}
+.status-dot.connected{background:var(--green);box-shadow:0 0 8px var(--green);}
+.status-dot.error{background:var(--red);}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.back-btn{display:flex;align-items:center;gap:6px;background:transparent;border:none;cursor:pointer;font-family:"Share Tech Mono",monospace;font-size:11px;letter-spacing:2px;color:var(--subtext);margin-bottom:12px;padding:4px 0;transition:color .2s;}
+.back-btn:hover{color:var(--accent);}
+.online-strip{display:none;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;background:rgba(155,89,182,.1);border:1px solid rgba(155,89,182,.25);border-radius:8px;margin-bottom:12px;}
+.online-strip.show{display:flex;flex-wrap:wrap;gap:6px;}
+.online-strip-left{display:flex;align-items:center;gap:8px;font-family:"Share Tech Mono",monospace;font-size:10px;letter-spacing:1px;color:var(--purple);}
+.online-code{font-family:"Orbitron",sans-serif;font-size:13px;font-weight:900;color:var(--gold);letter-spacing:4px;}
+.scoreboard{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;margin-bottom:14px;align-items:center;}
+.score-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 10px;text-align:center;position:relative;overflow:hidden;}
+.score-card::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(57,255,20,.06),transparent);pointer-events:none;}
+.score-card.cpu-card::before{background:linear-gradient(135deg,rgba(255,107,53,.06),transparent);}
+.score-card.online-p2::before{background:linear-gradient(135deg,rgba(155,89,182,.08),transparent);}
+.score-label{font-family:"Share Tech Mono",monospace;font-size:9px;letter-spacing:2px;color:var(--subtext);text-transform:uppercase;margin-bottom:2px;}
+.score-name{font-family:"Orbitron",sans-serif;font-size:clamp(10px,2.5vw,13px);font-weight:700;color:var(--accent);margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.score-card.cpu-card .score-name{color:var(--accent2);}.score-card.online-p2 .score-name{color:var(--purple);}
+.score-num{font-family:"Orbitron",sans-serif;font-size:clamp(28px,7vw,40px);font-weight:900;line-height:1;}
+.vs-text{font-family:"Orbitron",sans-serif;font-size:clamp(16px,4vw,22px);font-weight:900;color:var(--gold);text-shadow:0 0 20px rgba(255,215,0,.5);}
+.round-info{font-family:"Share Tech Mono",monospace;font-size:10px;color:var(--subtext);margin-top:4px;}
+.arena{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px 14px;margin-bottom:14px;min-height:148px;display:flex;align-items:center;justify-content:space-around;gap:10px;position:relative;overflow:hidden;}
+.arena::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(0,212,255,.04) 0%,transparent 70%);pointer-events:none;}
+.arena-side{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;min-width:0;}
+.arena-label{font-family:"Share Tech Mono",monospace;font-size:clamp(8px,1.8vw,10px);letter-spacing:2px;color:var(--subtext);text-transform:uppercase;text-align:center;}
+.arena-choice{width:clamp(68px,18vw,90px);height:clamp(68px,18vw,90px);border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:clamp(36px,9vw,48px);background:var(--surface2);transition:all .3s;flex-shrink:0;}
+.arena-choice.player-aura{border-color:rgba(57,255,20,.3);box-shadow:0 0 20px rgba(57,255,20,.15);}
+.arena-choice.cpu-aura{border-color:rgba(255,107,53,.3);box-shadow:0 0 20px rgba(255,107,53,.15);}
+.arena-choice.p2-aura{border-color:rgba(155,89,182,.4);box-shadow:0 0 20px rgba(155,89,182,.2);}
+.arena-choice.waiting-aura{border-color:rgba(255,215,0,.3);animation:pulse-gold 1.5s infinite;}
+@keyframes pulse-gold{0%,100%{box-shadow:0 0 10px rgba(255,215,0,.2)}50%{box-shadow:0 0 24px rgba(255,215,0,.4)}}
+.arena-choice-name{font-family:"Orbitron",sans-serif;font-size:clamp(7px,1.5vw,10px);font-weight:700;color:var(--subtext);letter-spacing:1px;text-transform:uppercase;text-align:center;}
+.arena-divider{display:flex;flex-direction:column;align-items:center;gap:6px;flex:0 0 auto;}
+.vs-badge{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-family:"Orbitron",sans-serif;font-size:11px;font-weight:900;color:white;box-shadow:0 0 16px rgba(0,212,255,.3);}
+.result-banner{text-align:center;padding:11px;border-radius:12px;margin-bottom:14px;font-family:"Orbitron",sans-serif;font-size:clamp(13px,2.8vw,19px);font-weight:900;letter-spacing:1px;min-height:50px;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .4s;opacity:0;}
+.result-banner.show{opacity:1;}
+.result-banner.win{background:rgba(57,255,20,.1);border:1px solid rgba(57,255,20,.3);color:var(--green);text-shadow:0 0 16px rgba(57,255,20,.6);animation:pulse-green .8s ease-out;}
+.result-banner.lose{background:rgba(255,34,68,.1);border:1px solid rgba(255,34,68,.3);color:var(--red);}
+.result-banner.draw{background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.25);color:var(--gold);}
+.result-rule{font-family:"Share Tech Mono",monospace;font-size:10px;font-weight:400;color:var(--subtext);letter-spacing:1px;display:block;margin-top:3px;}
+@keyframes pulse-green{0%{box-shadow:0 0 0 rgba(57,255,20,0)}50%{box-shadow:0 0 30px rgba(57,255,20,.3)}100%{box-shadow:0 0 0 rgba(57,255,20,0)}}
+.choices-label{font-family:"Share Tech Mono",monospace;font-size:10px;letter-spacing:3px;color:var(--subtext);text-align:center;margin-bottom:10px;text-transform:uppercase;}
+.choices-grid{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;}
+.choice-btn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 8px 9px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s;width:clamp(60px,17vw,86px);color:var(--text);-webkit-tap-highlight-color:transparent;user-select:none;}
+.choice-btn:hover,.choice-btn:focus{transform:translateY(-4px) scale(1.06);outline:none;}
+.choice-btn.rock:hover{border-color:#ff6b35;box-shadow:0 6px 20px rgba(255,107,53,.25);}
+.choice-btn.paper:hover{border-color:#00d4ff;box-shadow:0 6px 20px rgba(0,212,255,.25);}
+.choice-btn.scissors:hover{border-color:#ff2244;box-shadow:0 6px 20px rgba(255,34,68,.25);}
+.choice-btn.lizard:hover{border-color:#39ff14;box-shadow:0 6px 20px rgba(57,255,20,.25);}
+.choice-btn.spock:hover{border-color:#9b59b6;box-shadow:0 6px 20px rgba(155,89,182,.35);}
+.choice-btn:active{transform:scale(.95);}
+.choice-btn.disabled{opacity:.35;pointer-events:none;}
+.choice-btn.selected-glow{border-color:var(--gold)!important;box-shadow:0 0 18px rgba(255,215,0,.4)!important;}
+.choice-emoji{font-size:clamp(26px,6.5vw,34px);line-height:1;}
+.choice-name{font-family:"Orbitron",sans-serif;font-size:clamp(6px,1.3vw,8px);font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--subtext);text-align:center;}
+.waiting-msg,.thinking{display:none;justify-content:center;align-items:center;gap:9px;margin-bottom:10px;padding:9px;font-family:"Share Tech Mono",monospace;font-size:11px;border-radius:8px;}
+.waiting-msg{color:var(--gold);background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.2);}
+.waiting-msg.show,.thinking.show{display:flex;}.thinking{color:var(--accent2);}
+.dot{width:6px;height:6px;border-radius:50%;background:currentColor;animation:bounce .6s ease-in-out infinite;}
+.dot:nth-child(2){animation-delay:.1s;}.dot:nth-child(3){animation-delay:.2s;}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+.rules-toggle{display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-family:"Share Tech Mono",monospace;font-size:10px;letter-spacing:2px;color:var(--subtext);padding:7px;border:1px solid var(--border);border-radius:8px;background:var(--surface);margin:0 auto 10px;max-width:220px;transition:all .2s;text-transform:uppercase;}
+.rules-toggle:hover{color:var(--accent);border-color:var(--accent);}
+.rules-panel{display:none;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:14px;}
+.rules-panel.open{display:block;}
+.rules-title{font-family:"Orbitron",sans-serif;font-size:11px;font-weight:700;color:var(--accent);letter-spacing:2px;margin-bottom:10px;text-align:center;}
+.rules-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:5px;}
+.rule-item{font-family:"Share Tech Mono",monospace;font-size:10px;color:var(--subtext);padding:5px 8px;background:var(--surface2);border-radius:6px;border-left:2px solid var(--border);}
+.rule-item span{color:var(--accent);}
+.reset-btn{display:block;margin:10px auto 0;padding:9px 24px;background:transparent;border:1.5px solid rgba(255,107,53,.4);border-radius:8px;color:var(--accent2);font-family:"Orbitron",sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;cursor:pointer;transition:all .2s;text-transform:uppercase;}
+.reset-btn:hover{background:rgba(255,107,53,.1);border-color:var(--accent2);box-shadow:0 0 16px rgba(255,107,53,.2);}
+.disconnect-btn{display:block;margin:7px auto 0;padding:7px 18px;background:transparent;border:1px solid rgba(255,34,68,.3);border-radius:8px;color:var(--red);font-family:"Share Tech Mono",monospace;font-size:10px;letter-spacing:2px;cursor:pointer;transition:all .2s;}
+.disconnect-btn:hover{background:rgba(255,34,68,.1);}
+@keyframes pop-in{0%{transform:scale(0);opacity:0}70%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+.pop-in{animation:pop-in .35s cubic-bezier(.175,.885,.32,1.275);}
+.bazinga-overlay{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;}
+.bazinga-overlay.show{animation:bazinga-fade 1.8s ease forwards;}
+@keyframes bazinga-fade{0%{opacity:0;transform:scale(.5)}20%{opacity:1;transform:scale(1.05)}70%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.1)}}
+.bazinga-text{font-family:"Orbitron",sans-serif;font-size:clamp(48px,12vw,88px);font-weight:900;color:var(--gold);text-shadow:0 0 30px rgba(255,215,0,.8),0 0 60px rgba(255,215,0,.4),4px 4px 0 rgba(0,0,0,.5);letter-spacing:4px;pointer-events:none;}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:9px 18px;font-family:"Share Tech Mono",monospace;font-size:11px;color:var(--accent);z-index:200;transition:transform .3s;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis;pointer-events:none;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.footer{text-align:center;margin-top:22px;font-family:"Share Tech Mono",monospace;font-size:10px;color:#334;letter-spacing:2px;}
+.footer span{color:var(--accent);}
+.footer-info-link{display:inline-block;margin-left:12px;color:var(--subtext);font-family:"Share Tech Mono",monospace;font-size:10px;letter-spacing:1px;text-decoration:none;transition:color .2s;}
+.footer-info-link:hover{color:var(--accent);}
+@media(max-width:400px){.choices-grid{gap:6px;}.choice-btn{width:clamp(56px,16vw,72px);padding:10px 6px 8px;}.arena{padding:14px 8px;min-height:130px;}.scoreboard{gap:7px;}.lobby-box{padding:18px 14px;}.room-code-value{letter-spacing:3px;}.join-input{font-size:20px;letter-spacing:4px;}}
+@media(max-width:340px){.choices-grid{gap:5px;}.choice-btn{width:54px;}.logo-title{font-size:18px;}}
+</style>
+</head>
+<body>
+<div class="stars"></div>
+<div class="bazinga-overlay" id="bazingaOverlay"><div class="bazinga-text">BAZINGA!</div></div>
+<div class="toast" id="toast"></div>
+
+<div class="lang-bar">
+  <label for="langSel">Sprache:</label>
+  <select class="lang-select" id="langSel" onchange="switchLang(this.value)">
+    <option value="it">🇮🇹 Italiano</option>
+<option value="en">🇬🇧 English</option>
+<option value="fr">🇫🇷 Français</option>
+<option value="es">🇪🇸 Español</option>
+<option value="de" selected>🇩🇪 Deutsch</option>
+  </select>
+</div>
+
+<!-- SCREEN: MENU -->
+<div class="screen active" id="screenMenu">
+  <div class="container">
+    <div class="header">
+      <div class="logo-top">📡 Caltech Theoretical Physics Dept.</div>
+      <div class="logo-title">ROCK·PAPER·SCISSORS<br>LIZARD·SPOCK</div>
+      <div class="logo-sub">⚡ BAZINGA EDITION ⚡</div>
+      <div class="sheldon-quote">"Die Schere schneidet Papier, Papier bedeckt Stein, Stein zerquetscht die Eidechse, die Eidechse vergiftet Spock, Spock zertrümmert die Schere, die Schere köpft die Eidechse, die Eidechse frisst das Papier, Papier widerlegt Spock, Spock verdampft den Stein, und wie es immer war, zerquetscht der Stein die Schere." — Sheldon Cooper</div>
+    </div>
+    <div class="mode-grid">
+      <div class="mode-card" onclick="startSolo()">
+        <span class="mode-icon">🤖</span>
+        <div class="mode-title">VS SHELDON KI</div>
+        <div class="mode-desc">Fordere Sheldon Coopers künstliche Intelligenz heraus. Kannst du einen IQ von 187 schlagen?</div>
+        <div class="mode-badge">EINZELSPIELER</div>
+      </div>
+      <div class="mode-card online-card" onclick="showLobby()">
+        <span class="mode-icon">🌐</span>
+        <div class="mode-title">ONLINE 1 vs 1</div>
+        <div class="mode-desc">Spiele in Echtzeit gegen einen Freund. Erstelle einen Raum und teile den Code.</div>
+        <div class="mode-badge">MEHRSPIELER</div>
+      </div>
+    </div>
+    <div class="footer">Made with 💙 for fans of <span>The Big Bang Theory</span> · BAZINGA! <a class="footer-info-link" href="about_de.html">ℹ️ Info</a></div>
+  </div>
+</div>
+
+<!-- SCREEN: LOBBY -->
+<div class="screen" id="screenLobby">
+  <div class="container">
+    <div class="header">
+      <div class="logo-top">📡 Caltech Theoretical Physics Dept.</div>
+      <div class="logo-title">ROCK·PAPER·SCISSORS<br>LIZARD·SPOCK</div>
+    </div>
+    <div class="lobby-box">
+      <div class="lobby-title">🌐 ONLINE-VERBINDUNG</div>
+      <div class="status-bar">
+        <div class="status-dot connecting" id="lobbyStatusDot"></div>
+        <span id="lobbyStatusText">Verbindung zum Server wird hergestellt...</span>
+      </div>
+      <div class="lobby-tabs">
+        <button class="lobby-tab active" id="tabCreate" onclick="switchTab('create')">➕ RAUM ERSTELLEN</button>
+        <button class="lobby-tab" id="tabJoin" onclick="switchTab('join')">🔗 BEITRETEN</button>
+      </div>
+      <div id="panelCreate">
+        <div class="room-code-display">
+          <div class="room-code-label">Dein Raumcode</div>
+          <div class="room-code-value" id="myRoomCode">------</div>
+          <div class="room-code-hint">Teile diesen Code mit deinem Gegner.<br>Das Spiel beginnt sobald er sich verbindet.</div>
+        </div>
+        <button class="copy-btn" onclick="copyCode()">📋 Code kopieren</button>
+        <div style="margin-top:11px;text-align:center;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--subtext)">🕐 Warte auf Gegner...</div>
+      </div>
+      <div id="panelJoin" style="display:none">
+        <input class="join-input" id="joinCodeInput" type="text" maxlength="6"
+          placeholder="Raumcode..." oninput="this.value=this.value.toUpperCase()" />
+        <button class="join-btn" onclick="joinRoom()">🖖 VERBINDEN</button>
+        <div style="margin-top:9px;text-align:center;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--subtext)" id="joinError"></div>
+      </div>
+    </div>
+    <button class="back-btn" onclick="goHome()">← Zurück zum Menü</button>
+  </div>
+</div>
+
+<!-- SCREEN: GAME -->
+<div class="screen" id="screenGame">
+  <div class="container">
+    <button class="back-btn" onclick="goHome()">← Menü</button>
+    <div class="online-strip" id="onlineStrip">
+      <div class="online-strip-left">
+        <div class="status-dot connected"></div>
+        <span>ONLINE · Raum</span>
+        <span class="online-code" id="stripCode">------</span>
+      </div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--subtext)" id="stripOpponent">Gegner verbunden</div>
+    </div>
+    <div class="scoreboard">
+      <div class="score-card">
+        <div class="score-label">Spieler</div>
+        <div class="score-name" id="p1Name">⚛️ DU</div>
+        <div class="score-num" id="playerScore">0</div>
+      </div>
+      <div style="text-align:center">
+        <div class="vs-text">VS</div>
+        <div class="round-info">Runde <span id="roundNum">1</span></div>
+      </div>
+      <div class="score-card" id="p2Card">
+        <div class="score-label">Gegner</div>
+        <div class="score-name" id="p2Name">🤖 SHELDON</div>
+        <div class="score-num" id="cpuScore">0</div>
+      </div>
+    </div>
+    <div class="arena">
+      <div class="arena-side">
+        <div class="arena-label">Deine Wahl</div>
+        <div class="arena-choice player-aura" id="playerDisplay">❓</div>
+        <div class="arena-choice-name" id="playerChoiceName">—</div>
+      </div>
+      <div class="arena-divider"><div class="vs-badge">VS</div></div>
+      <div class="arena-side">
+        <div class="arena-label" id="p2ArenaLabel">Sheldon wählt</div>
+        <div class="arena-choice cpu-aura" id="cpuDisplay">❓</div>
+        <div class="arena-choice-name" id="cpuChoiceName">—</div>
+      </div>
+    </div>
+    <div class="thinking" id="thinking"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>Sheldon berechnet...</span></div>
+    <div class="waiting-msg" id="waitingMsg"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>Zug gesendet — warte auf Gegner...</span></div>
+    <div class="result-banner" id="resultBanner"></div>
+    <div class="choices-label">— Wähle deinen Zug —</div>
+    <div class="choices-grid" id="choicesGrid">
+      <button class="choice-btn rock"     data-ch="rock"     onclick="play('rock')"    ><div class="choice-emoji">✊</div><div class="choice-name">Stein</div></button>
+      <button class="choice-btn paper"    data-ch="paper"    onclick="play('paper')"   ><div class="choice-emoji">🖐️</div><div class="choice-name">Papier</div></button>
+      <button class="choice-btn scissors" data-ch="scissors" onclick="play('scissors')"><div class="choice-emoji">✌️</div><div class="choice-name">Schere</div></button>
+      <button class="choice-btn lizard"   data-ch="lizard"   onclick="play('lizard')"  ><div class="choice-emoji">🦎</div><div class="choice-name">Eidechse</div></button>
+      <button class="choice-btn spock"    data-ch="spock"    onclick="play('spock')"   ><div class="choice-emoji">🖖</div><div class="choice-name">Spock</div></button>
+    </div>
+    <div class="rules-toggle" onclick="toggleRules()">📋 <span>Regeln</span> <span id="rulesArrow">▼</span></div>
+    <div class="rules-panel" id="rulesPanel">
+      <div class="rules-title">// SIEGESTABELLE //</div>
+      <div class="rules-grid">
+        <div class="rule-item">✌️ <span>Schere</span> · Schere schneidet Papier</div>
+        <div class="rule-item">🖐️ <span>Papier</span> · Papier bedeckt Stein</div>
+        <div class="rule-item">✊ <span>Stein</span> · Stein zerquetscht Eidechse</div>
+        <div class="rule-item">🦎 <span>Eidechse</span> · Eidechse vergiftet Spock</div>
+        <div class="rule-item">🖖 <span>Spock</span> · Spock zertrümmert Schere</div>
+        <div class="rule-item">✌️ <span>Schere</span> · Schere köpft Eidechse</div>
+        <div class="rule-item">🦎 <span>Eidechse</span> · Eidechse frisst Papier</div>
+        <div class="rule-item">🖐️ <span>Papier</span> · Papier widerlegt Spock</div>
+        <div class="rule-item">🖖 <span>Spock</span> · Spock verdampft Stein</div>
+        <div class="rule-item">✊ <span>Stein</span> · Stein zerquetscht Schere</div>
+      </div>
+    </div>
+    <button class="reset-btn" onclick="resetGame()">↺ PUNKTE ZURÜCKSETZEN</button>
+    <button class="disconnect-btn" id="disconnectBtn" style="display:none" onclick="goHome()">✕ Trennen</button>
+    <div class="footer">Made with 💙 for fans of <span>The Big Bang Theory</span> · BAZINGA! <a class="footer-info-link" href="about_de.html">ℹ️ Info</a></div>
+  </div>
+</div>
+
+<script>
+const EMOJIS={rock:"✊",paper:"🖐️",scissors:"✌️",lizard:"🦎",spock:"🖖"};
+const NAMES={rock:"Stein",paper:"Papier",scissors:"Schere",lizard:"Eidechse",spock:"Spock"};
+const RULES={
+  scissors:{paper:"Schere schneidet Papier",lizard:"Schere köpft Eidechse"},
+  paper:{rock:"Papier bedeckt Stein",spock:"Papier widerlegt Spock"},
+  rock:{lizard:"Stein zerquetscht Eidechse",scissors:"Stein zerquetscht Schere"},
+  lizard:{spock:"Eidechse vergiftet Spock",paper:"Eidechse frisst Papier"},
+  spock:{scissors:"Spock zertrümmert Schere",rock:"Spock verdampft Stein"}
+};
+const KEYS=Object.keys(EMOJIS);
+const Q_LOSE=["Natürlich habe ich gewonnen. Ich bin Sheldon Cooper.","Wie von der Wahrscheinlichkeitstheorie vorhergesagt.","Dein Zug war statistisch vorhersehbar.","Mein IQ von 187 erwies sich als nützlich.","Bazinga! Nein, diesmal habe ich wirklich gewonnen."];const Q_WIN=["Unmöglich! Neuberechnung läuft...","Du hast durch Glück gewonnen. Fehler in meinem Algorithmus.","Gedankennotiz: Strategie auf 97,3% verbessern.","Das ist inakzeptabel. Ich will meinen Platz zurück.","Bazinga! (diesmal funktioniert es nicht, ich weiß)"];const Q_DRAW=["Unentschieden. Wie Schrödingers Katze.","Unentschieden? Die Wahrscheinlichkeit war 20%. Genau.","Niemand gewinnt. Wie Kants Frieden.","Merkwürdig unbefriedigend."];
+const STR={
+  r_win:"🏆 DU GEWINNST!",r_lose:"💀 DU VERLIERST!",r_draw:"🤝 UNENTSCHIEDEN!",r_draw_rule:"Gleiche Wahl — keine Punkte",
+  toast_copied:"✅ Code kopiert!",toast_connected:"🖖 Verbunden! Lass das Spiel beginnen!",
+  toast_not_conn:"⚠️ Nicht verbunden!",toast_opp_disco:"⚠️ Gegner getrennt",
+  toast_reset:"↺ Gegner hat den Punktestand zurückgesetzt",net_error:"Netzwerkfehler — bitte erneut versuchen",invalid_code:"⚠️ Ungültiger Code",
+  opp_connected:"Gegner verbunden",sheldon_name:"🤖 SHELDON",human_opp:"👾 GEGNER",
+  you_name:"⚛️ DU",sheldon_choice:"Sheldon wählt",opp_choice:"Gegner wählt",
+  connecting:"Verbindung zum Server wird hergestellt...",server_ready:"Bereit — teile den Code mit deinem Gegner",online_room:"ONLINE · Raum"
+};
+let mode="solo",playerScore=0,cpuScore=0,round=1,busy=false;
+let peer=null,conn=null,isHost=false,myChoice=null,opponentChoice=null,roomCode=null;
+function switchLang(c){window.location.href="index_"+c+".html";}
+function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");window.scrollTo(0,0);}
+let toastTimer=null;
+function showToast(msg,dur=2800){clearTimeout(toastTimer);const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");toastTimer=setTimeout(()=>t.classList.remove("show"),dur);}
+function setChoicesEnabled(v){document.querySelectorAll(".choice-btn").forEach(b=>b.classList.toggle("disabled",!v));}
+function setBusy(v){busy=v;setChoicesEnabled(!v);}
+function startSolo(){mode="solo";resetGameState();document.getElementById("p2Name").textContent=STR.sheldon_name;document.getElementById("p2Card").className="score-card cpu-card";document.getElementById("p2ArenaLabel").textContent=STR.sheldon_choice;document.getElementById("cpuDisplay").className="arena-choice cpu-aura";document.getElementById("onlineStrip").classList.remove("show");document.getElementById("disconnectBtn").style.display="none";showScreen("screenGame");}
+function showLobby(){showScreen("screenLobby");initPeer();}
+function switchTab(tab){["create","join"].forEach(t=>{document.getElementById("tab"+t.charAt(0).toUpperCase()+t.slice(1)).classList.toggle("active",t===tab);document.getElementById("panel"+t.charAt(0).toUpperCase()+t.slice(1)).style.display=t===tab?"block":"none";});}
+function setLobbyStatus(s,tx){document.getElementById("lobbyStatusDot").className="status-dot "+s;document.getElementById("lobbyStatusText").textContent=tx;}
+function genCode(){const c="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";return Array.from({length:6},()=>c[Math.floor(Math.random()*c.length)]).join("");}
+function initPeer(){if(peer&&!peer.destroyed){try{peer.destroy();}catch(e){}peer=null;}myChoice=null;opponentChoice=null;setLobbyStatus("connecting",STR.connecting);const code=genCode();roomCode=code;document.getElementById("myRoomCode").textContent=code;peer=new Peer(code,{host:"0.peerjs.com",port:443,path:"/",secure:true,debug:0});peer.on("open",()=>setLobbyStatus("connected",STR.server_ready));peer.on("connection",c=>{conn=c;isHost=true;setupConn();});peer.on("error",err=>{if(err.type==="unavailable-id"){setTimeout(initPeer,600);return;}setLobbyStatus("error",STR.net_error);});}
+function joinRoom(){const code=document.getElementById("joinCodeInput").value.trim().toUpperCase();if(code.length<4){document.getElementById("joinError").textContent=STR.invalid_code;return;}document.getElementById("joinError").textContent="⏳ "+code+"...";const doJoin=()=>{isHost=false;roomCode=code;conn=peer.connect(code,{reliable:true});setupConn();};if(!peer||peer.destroyed){peer=new Peer(undefined,{host:"0.peerjs.com",port:443,path:"/",secure:true,debug:0});peer.on("open",doJoin);peer.on("error",err=>{document.getElementById("joinError").textContent="⚠️ "+(err.message||err.type);});}else{doJoin();}}
+function setupConn(){conn.on("open",()=>{mode="online";resetGameState();document.getElementById("p2Name").textContent=STR.human_opp;document.getElementById("p2Card").className="score-card online-p2";document.getElementById("p2ArenaLabel").textContent=STR.opp_choice;document.getElementById("cpuDisplay").className="arena-choice p2-aura";document.getElementById("onlineStrip").classList.add("show");document.getElementById("stripCode").textContent=roomCode;document.getElementById("stripOpponent").textContent="🟢 "+STR.opp_connected;document.getElementById("disconnectBtn").style.display="block";showScreen("screenGame");showToast(STR.toast_connected);});conn.on("data",handleMsg);conn.on("close",()=>{if(mode!=="online")return;document.getElementById("stripOpponent").textContent="🔴 "+STR.toast_opp_disco;showToast(STR.toast_opp_disco,4000);setBusy(false);document.getElementById("waitingMsg").classList.remove("show");setChoicesEnabled(false);});conn.on("error",err=>console.warn("conn:",err));}
+function handleMsg(data){if(data.type==="choice"){opponentChoice=data.choice;if(myChoice)revealOnline();}else if(data.type==="reset"){resetGameState();showToast(STR.toast_reset);}}
+function copyCode(){navigator.clipboard.writeText(document.getElementById("myRoomCode").textContent).then(()=>showToast(STR.toast_copied));}
+function resetGameState(){playerScore=0;cpuScore=0;round=1;busy=false;myChoice=null;opponentChoice=null;["playerScore","cpuScore"].forEach(id=>document.getElementById(id).textContent="0");document.getElementById("roundNum").textContent="1";document.getElementById("playerDisplay").textContent="❓";document.getElementById("cpuDisplay").textContent="❓";document.getElementById("playerChoiceName").textContent="—";document.getElementById("cpuChoiceName").textContent="—";document.getElementById("resultBanner").className="result-banner";document.getElementById("resultBanner").innerHTML="";document.getElementById("waitingMsg").classList.remove("show");document.getElementById("thinking").classList.remove("show");document.querySelectorAll(".choice-btn").forEach(b=>b.classList.remove("disabled","selected-glow"));}
+function play(ch){if(busy)return;if(mode==="solo")playSolo(ch);else playOnline(ch);}
+function playSolo(ch){setBusy(true);document.getElementById("playerDisplay").textContent=EMOJIS[ch];anim("playerDisplay");document.getElementById("playerChoiceName").textContent=NAMES[ch];document.getElementById("cpuDisplay").textContent="🤔";document.getElementById("cpuChoiceName").textContent="...";document.getElementById("resultBanner").className="result-banner";document.getElementById("thinking").classList.add("show");setTimeout(()=>{document.getElementById("thinking").classList.remove("show");const cpu=KEYS[Math.floor(Math.random()*KEYS.length)];showResult(ch,cpu,true);setTimeout(()=>setBusy(false),700);},900);}
+function playOnline(ch){if(!conn||!conn.open){showToast(STR.toast_not_conn);return;}myChoice=ch;setBusy(true);document.getElementById("playerDisplay").textContent=EMOJIS[ch];anim("playerDisplay");document.getElementById("playerChoiceName").textContent=NAMES[ch];document.getElementById("cpuDisplay").textContent="⏳";document.getElementById("cpuDisplay").className="arena-choice waiting-aura";document.getElementById("cpuChoiceName").textContent="...";document.getElementById("resultBanner").className="result-banner";document.querySelectorAll(".choice-btn").forEach(b=>b.classList.toggle("selected-glow",b.dataset.ch===ch));conn.send({type:"choice",choice:ch});if(opponentChoice)revealOnline();else document.getElementById("waitingMsg").classList.add("show");}
+function revealOnline(){document.getElementById("waitingMsg").classList.remove("show");document.querySelectorAll(".choice-btn").forEach(b=>b.classList.remove("selected-glow"));const el=document.getElementById("cpuDisplay");el.className="arena-choice p2-aura";el.textContent=EMOJIS[opponentChoice];anim("cpuDisplay");showResult(myChoice,opponentChoice,false);myChoice=null;opponentChoice=null;setTimeout(()=>setBusy(false),700);}
+function showResult(p,cpu,isAI){document.getElementById("cpuChoiceName").textContent=NAMES[cpu];if(isAI){document.getElementById("cpuDisplay").textContent=EMOJIS[cpu];anim("cpuDisplay");}let outcome,mainText,ruleText,quote="";if(p===cpu){outcome="draw";mainText=STR.r_draw;ruleText=STR.r_draw_rule;if(isAI)quote=Q_DRAW[Math.floor(Math.random()*Q_DRAW.length)];}else if(RULES[p]&&RULES[p][cpu]){outcome="win";playerScore++;mainText=STR.r_win;ruleText=RULES[p][cpu];if(isAI)quote=Q_WIN[Math.floor(Math.random()*Q_WIN.length)];triggerBazinga();}else{outcome="lose";cpuScore++;mainText=STR.r_lose;ruleText=RULES[cpu][p];if(isAI)quote=Q_LOSE[Math.floor(Math.random()*Q_LOSE.length)];}document.getElementById("playerScore").textContent=playerScore;document.getElementById("cpuScore").textContent=cpuScore;document.getElementById("roundNum").textContent=++round;const b=document.getElementById("resultBanner");b.className="result-banner show "+outcome;b.innerHTML="<div><div>"+mainText+"</div><span class='result-rule'>"+ruleText+"</span>"+(quote?"<span class='result-rule' style='color:#556;margin-top:3px;display:block;font-style:italic'>&#8220;"+quote+"&#8221;</span>":"")+"</div>";}
+function anim(id){const el=document.getElementById(id);el.classList.remove("pop-in");void el.offsetWidth;el.classList.add("pop-in");}
+function triggerBazinga(){const o=document.getElementById("bazingaOverlay");o.className="bazinga-overlay";void o.offsetWidth;o.className="bazinga-overlay show";setTimeout(()=>o.className="bazinga-overlay",1800);}
+function toggleRules(){const p=document.getElementById("rulesPanel");p.classList.toggle("open");document.getElementById("rulesArrow").textContent=p.classList.contains("open")?"▲":"▼";}
+function resetGame(){resetGameState();if(mode==="online"&&conn&&conn.open)conn.send({type:"reset"});}
+function goHome(){if(conn){try{conn.close();}catch(e){}conn=null;}if(peer&&!peer.destroyed){try{peer.destroy();}catch(e){}peer=null;}mode="solo";myChoice=null;opponentChoice=null;showScreen("screenMenu");}
+</script>
+</body>
+</html>
