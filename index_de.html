@@ -97,6 +97,41 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
 .result-banner.draw{background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.25);color:var(--gold);}
 .result-rule{font-family:"Share Tech Mono",monospace;font-size:10px;font-weight:400;color:var(--subtext);letter-spacing:1px;display:block;margin-top:3px;}
 @keyframes pulse-green{0%{box-shadow:0 0 0 rgba(57,255,20,0)}50%{box-shadow:0 0 30px rgba(57,255,20,.3)}100%{box-shadow:0 0 0 rgba(57,255,20,0)}}
+
+/* ── COUNTDOWN BANNER ── */
+.choice-countdown{
+  display:none; flex-direction:column; align-items:center; gap:6px;
+  padding:14px 16px; margin-bottom:12px;
+  background:rgba(255,34,68,.08);
+  border:2px solid rgba(255,34,68,.5);
+  border-radius:14px;
+  animation:countdown-pulse 0.5s ease-in-out infinite alternate;
+  position:relative; overflow:hidden;
+}
+.choice-countdown::before{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,34,68,.06),transparent);
+  animation:scan 1.5s linear infinite;
+}
+@keyframes scan{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+@keyframes countdown-pulse{0%{border-color:rgba(255,34,68,.4);box-shadow:0 0 12px rgba(255,34,68,.15)}100%{border-color:rgba(255,107,53,.8);box-shadow:0 0 28px rgba(255,34,68,.35)}}
+.choice-countdown.show{display:flex;}
+.countdown-top{display:flex;align-items:center;gap:10px;}
+.countdown-title{font-family:"Orbitron",sans-serif;font-size:clamp(11px,2.5vw,14px);font-weight:900;color:var(--red);letter-spacing:1px;text-transform:uppercase;}
+.countdown-circle{
+  width:52px; height:52px; border-radius:50%;
+  background:var(--surface2);
+  border:3px solid var(--red);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  flex-shrink:0;
+  box-shadow:0 0 16px rgba(255,34,68,.4);
+}
+.countdown-num{font-family:"Orbitron",sans-serif;font-size:22px;font-weight:900;color:var(--red);line-height:1;}
+.countdown-seclabel{font-family:"Share Tech Mono",monospace;font-size:7px;color:var(--subtext);letter-spacing:1px;margin-top:1px;}
+.countdown-bar-wrap{width:100%;height:5px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;}
+.countdown-bar{height:100%;background:linear-gradient(90deg,var(--red),var(--accent2));border-radius:4px;transition:width 0.9s linear;width:100%;}
+.countdown-choose{font-family:"Orbitron",sans-serif;font-size:clamp(13px,3vw,17px);font-weight:900;color:var(--accent2);letter-spacing:3px;text-shadow:0 0 12px rgba(255,107,53,.5);}
+
 .choices-label{font-family:"Share Tech Mono",monospace;font-size:10px;letter-spacing:3px;color:var(--subtext);text-align:center;margin-bottom:10px;text-transform:uppercase;}
 .choices-grid{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;}
 .choice-btn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 8px 9px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s;width:clamp(60px,17vw,86px);color:var(--text);-webkit-tap-highlight-color:transparent;user-select:none;}
@@ -109,14 +144,21 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
 .choice-btn:active{transform:scale(.95);}
 .choice-btn.disabled{opacity:.35;pointer-events:none;}
 .choice-btn.selected-glow{border-color:var(--gold)!important;box-shadow:0 0 18px rgba(255,215,0,.4)!important;}
+/* Urgent pulse on buttons when countdown active */
+.countdown-urgent .choice-btn:not(.disabled){
+  animation:btn-urgent 0.4s ease-in-out infinite alternate;
+}
+@keyframes btn-urgent{0%{border-color:var(--border)}100%{border-color:rgba(255,34,68,.5);box-shadow:0 0 10px rgba(255,34,68,.2)}}
 .choice-emoji{font-size:clamp(26px,6.5vw,34px);line-height:1;}
 .choice-name{font-family:"Orbitron",sans-serif;font-size:clamp(6px,1.3vw,8px);font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--subtext);text-align:center;}
+
 .waiting-msg,.thinking{display:none;justify-content:center;align-items:center;gap:9px;margin-bottom:10px;padding:9px;font-family:"Share Tech Mono",monospace;font-size:11px;border-radius:8px;}
 .waiting-msg{color:var(--gold);background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.2);}
 .waiting-msg.show,.thinking.show{display:flex;}.thinking{color:var(--accent2);}
 .dot{width:6px;height:6px;border-radius:50%;background:currentColor;animation:bounce .6s ease-in-out infinite;}
 .dot:nth-child(2){animation-delay:.1s;}.dot:nth-child(3){animation-delay:.2s;}
 @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+
 .rules-toggle{display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-family:"Share Tech Mono",monospace;font-size:10px;letter-spacing:2px;color:var(--subtext);padding:7px;border:1px solid var(--border);border-radius:8px;background:var(--surface);margin:0 auto 10px;max-width:220px;transition:all .2s;text-transform:uppercase;}
 .rules-toggle:hover{color:var(--accent);border-color:var(--accent);}
 .rules-panel{display:none;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:14px;}
@@ -141,7 +183,7 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
 .footer span{color:var(--accent);}
 .footer-info-link{display:inline-block;margin-left:12px;color:var(--subtext);font-family:"Share Tech Mono",monospace;font-size:10px;letter-spacing:1px;text-decoration:none;transition:color .2s;}
 .footer-info-link:hover{color:var(--accent);}
-@media(max-width:400px){.choices-grid{gap:6px;}.choice-btn{width:clamp(56px,16vw,72px);padding:10px 6px 8px;}.arena{padding:14px 8px;min-height:130px;}.scoreboard{gap:7px;}.lobby-box{padding:18px 14px;}.room-code-value{letter-spacing:3px;}.join-input{font-size:20px;letter-spacing:4px;}}
+@media(max-width:400px){.choices-grid{gap:6px;}.choice-btn{width:clamp(56px,16vw,72px);padding:10px 6px 8px;}.arena{padding:14px 8px;min-height:130px;}.scoreboard{gap:7px;}.lobby-box{padding:18px 14px;}.room-code-value{letter-spacing:3px;}.join-input{font-size:20px;letter-spacing:4px;}.countdown-title{font-size:11px;}.countdown-circle{width:44px;height:44px;}.countdown-num{font-size:18px;}}
 @media(max-width:340px){.choices-grid{gap:5px;}.choice-btn{width:54px;}.logo-title{font-size:18px;}}
 </style>
 </head>
@@ -149,7 +191,6 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
 <div class="stars"></div>
 <div class="bazinga-overlay" id="bazingaOverlay"><div class="bazinga-text">BAZINGA!</div></div>
 <div class="toast" id="toast"></div>
-
 <div class="lang-bar">
   <label for="langSel">Sprache:</label>
   <select class="lang-select" id="langSel" onchange="switchLang(this.value)">
@@ -158,6 +199,7 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
 <option value="fr">🇫🇷 Français</option>
 <option value="es">🇪🇸 Español</option>
 <option value="de" selected>🇩🇪 Deutsch</option>
+<option value="tlh">⚔️ tlhIngan Hol</option>
   </select>
 </div>
 
@@ -266,8 +308,31 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
         <div class="arena-choice-name" id="cpuChoiceName">—</div>
       </div>
     </div>
-    <div class="thinking" id="thinking"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>Sheldon berechnet...</span></div>
-    <div class="waiting-msg" id="waitingMsg"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>Zug gesendet — warte auf Gegner...</span></div>
+
+    <div class="thinking" id="thinking">
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      <span>Sheldon berechnet...</span>
+    </div>
+    <div class="waiting-msg" id="waitingMsg">
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      <span>Zug gesendet — warte auf Gegner...</span>
+    </div>
+
+    <!-- COUNTDOWN BANNER (online only, opponent chose first) -->
+    <div class="choice-countdown" id="choiceCountdown">
+      <div class="countdown-top">
+        <div class="countdown-circle">
+          <div class="countdown-num" id="countdownNum">5</div>
+          <div class="countdown-seclabel">Sekunden</div>
+        </div>
+        <div>
+          <div class="countdown-title">⚡ GEGNER HAT GEWÄHLT!</div>
+          <div class="countdown-choose">JETZT WÄHLEN!</div>
+        </div>
+      </div>
+      <div class="countdown-bar-wrap"><div class="countdown-bar" id="countdownBar"></div></div>
+    </div>
+
     <div class="result-banner" id="resultBanner"></div>
     <div class="choices-label">— Wähle deinen Zug —</div>
     <div class="choices-grid" id="choicesGrid">
@@ -318,37 +383,237 @@ const STR={
   toast_reset:"↺ Gegner hat den Punktestand zurückgesetzt",net_error:"Netzwerkfehler — bitte erneut versuchen",invalid_code:"⚠️ Ungültiger Code",
   opp_connected:"Gegner verbunden",sheldon_name:"🤖 SHELDON",human_opp:"👾 GEGNER",
   you_name:"⚛️ DU",sheldon_choice:"Sheldon wählt",opp_choice:"Gegner wählt",
-  connecting:"Verbindung zum Server wird hergestellt...",server_ready:"Bereit — teile den Code mit deinem Gegner",online_room:"ONLINE · Raum"
+  connecting:"Verbindung zum Server wird hergestellt...",server_ready:"Bereit — teile den Code mit deinem Gegner",online_room:"ONLINE · Raum",
+  countdown_auto:"Zeit abgelaufen — zufälliger Zug gespielt!"
 };
+
+const COUNTDOWN_SECS = 5;
 let mode="solo",playerScore=0,cpuScore=0,round=1,busy=false;
 let peer=null,conn=null,isHost=false,myChoice=null,opponentChoice=null,roomCode=null;
+let countdownTimer=null, countdownLeft=0;
+
+/* ── LANG / SCREEN ── */
 function switchLang(c){window.location.href="index_"+c+".html";}
 function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");window.scrollTo(0,0);}
 let toastTimer=null;
 function showToast(msg,dur=2800){clearTimeout(toastTimer);const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");toastTimer=setTimeout(()=>t.classList.remove("show"),dur);}
 function setChoicesEnabled(v){document.querySelectorAll(".choice-btn").forEach(b=>b.classList.toggle("disabled",!v));}
 function setBusy(v){busy=v;setChoicesEnabled(!v);}
-function startSolo(){mode="solo";resetGameState();document.getElementById("p2Name").textContent=STR.sheldon_name;document.getElementById("p2Card").className="score-card cpu-card";document.getElementById("p2ArenaLabel").textContent=STR.sheldon_choice;document.getElementById("cpuDisplay").className="arena-choice cpu-aura";document.getElementById("onlineStrip").classList.remove("show");document.getElementById("disconnectBtn").style.display="none";showScreen("screenGame");}
+
+/* ── COUNTDOWN LOGIC ── */
+function startCountdown(){
+  stopCountdown();
+  countdownLeft = COUNTDOWN_SECS;
+  const el   = document.getElementById("choiceCountdown");
+  const num  = document.getElementById("countdownNum");
+  const bar  = document.getElementById("countdownBar");
+  const grid = document.getElementById("choicesGrid");
+  el.classList.add("show");
+  grid.classList.add("countdown-urgent");
+  num.textContent = countdownLeft;
+  bar.style.transition = "none";
+  bar.style.width = "100%";
+  // Trigger reflow then animate
+  void bar.offsetWidth;
+  bar.style.transition = "width " + COUNTDOWN_SECS + "s linear";
+  bar.style.width = "0%";
+  // Enable buttons so player can still choose
+  setChoicesEnabled(true);
+  countdownTimer = setInterval(()=>{
+    countdownLeft--;
+    num.textContent = Math.max(0, countdownLeft);
+    if(countdownLeft <= 0){
+      stopCountdown();
+      // Auto-play a random move
+      const randomCh = KEYS[Math.floor(Math.random()*KEYS.length)];
+      showToast(STR.countdown_auto, 3500);
+      playOnlineCommit(randomCh);
+    }
+  }, 1000);
+}
+
+function stopCountdown(){
+  if(countdownTimer){ clearInterval(countdownTimer); countdownTimer=null; }
+  countdownLeft = 0;
+  document.getElementById("choiceCountdown").classList.remove("show");
+  document.getElementById("choicesGrid").classList.remove("countdown-urgent");
+}
+
+/* ── SOLO MODE ── */
+function startSolo(){
+  mode="solo";resetGameState();
+  document.getElementById("p2Name").textContent=STR.sheldon_name;
+  document.getElementById("p2Card").className="score-card cpu-card";
+  document.getElementById("p2ArenaLabel").textContent=STR.sheldon_choice;
+  document.getElementById("cpuDisplay").className="arena-choice cpu-aura";
+  document.getElementById("onlineStrip").classList.remove("show");
+  document.getElementById("disconnectBtn").style.display="none";
+  showScreen("screenGame");
+}
+
+/* ── LOBBY / PEER ── */
 function showLobby(){showScreen("screenLobby");initPeer();}
 function switchTab(tab){["create","join"].forEach(t=>{document.getElementById("tab"+t.charAt(0).toUpperCase()+t.slice(1)).classList.toggle("active",t===tab);document.getElementById("panel"+t.charAt(0).toUpperCase()+t.slice(1)).style.display=t===tab?"block":"none";});}
 function setLobbyStatus(s,tx){document.getElementById("lobbyStatusDot").className="status-dot "+s;document.getElementById("lobbyStatusText").textContent=tx;}
 function genCode(){const c="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";return Array.from({length:6},()=>c[Math.floor(Math.random()*c.length)]).join("");}
-function initPeer(){if(peer&&!peer.destroyed){try{peer.destroy();}catch(e){}peer=null;}myChoice=null;opponentChoice=null;setLobbyStatus("connecting",STR.connecting);const code=genCode();roomCode=code;document.getElementById("myRoomCode").textContent=code;peer=new Peer(code,{host:"0.peerjs.com",port:443,path:"/",secure:true,debug:0});peer.on("open",()=>setLobbyStatus("connected",STR.server_ready));peer.on("connection",c=>{conn=c;isHost=true;setupConn();});peer.on("error",err=>{if(err.type==="unavailable-id"){setTimeout(initPeer,600);return;}setLobbyStatus("error",STR.net_error);});}
-function joinRoom(){const code=document.getElementById("joinCodeInput").value.trim().toUpperCase();if(code.length<4){document.getElementById("joinError").textContent=STR.invalid_code;return;}document.getElementById("joinError").textContent="⏳ "+code+"...";const doJoin=()=>{isHost=false;roomCode=code;conn=peer.connect(code,{reliable:true});setupConn();};if(!peer||peer.destroyed){peer=new Peer(undefined,{host:"0.peerjs.com",port:443,path:"/",secure:true,debug:0});peer.on("open",doJoin);peer.on("error",err=>{document.getElementById("joinError").textContent="⚠️ "+(err.message||err.type);});}else{doJoin();}}
-function setupConn(){conn.on("open",()=>{mode="online";resetGameState();document.getElementById("p2Name").textContent=STR.human_opp;document.getElementById("p2Card").className="score-card online-p2";document.getElementById("p2ArenaLabel").textContent=STR.opp_choice;document.getElementById("cpuDisplay").className="arena-choice p2-aura";document.getElementById("onlineStrip").classList.add("show");document.getElementById("stripCode").textContent=roomCode;document.getElementById("stripOpponent").textContent="🟢 "+STR.opp_connected;document.getElementById("disconnectBtn").style.display="block";showScreen("screenGame");showToast(STR.toast_connected);});conn.on("data",handleMsg);conn.on("close",()=>{if(mode!=="online")return;document.getElementById("stripOpponent").textContent="🔴 "+STR.toast_opp_disco;showToast(STR.toast_opp_disco,4000);setBusy(false);document.getElementById("waitingMsg").classList.remove("show");setChoicesEnabled(false);});conn.on("error",err=>console.warn("conn:",err));}
-function handleMsg(data){if(data.type==="choice"){opponentChoice=data.choice;if(myChoice)revealOnline();}else if(data.type==="reset"){resetGameState();showToast(STR.toast_reset);}}
+function initPeer(){
+  if(peer&&!peer.destroyed){try{peer.destroy();}catch(e){}peer=null;}
+  myChoice=null;opponentChoice=null;
+  setLobbyStatus("connecting",STR.connecting);
+  const code=genCode();roomCode=code;
+  document.getElementById("myRoomCode").textContent=code;
+  peer=new Peer(code,{host:"0.peerjs.com",port:443,path:"/",secure:true,debug:0});
+  peer.on("open",()=>setLobbyStatus("connected",STR.server_ready));
+  peer.on("connection",c=>{conn=c;isHost=true;setupConn();});
+  peer.on("error",err=>{if(err.type==="unavailable-id"){setTimeout(initPeer,600);return;}setLobbyStatus("error",STR.net_error);});
+}
+function joinRoom(){
+  const code=document.getElementById("joinCodeInput").value.trim().toUpperCase();
+  if(code.length<4){document.getElementById("joinError").textContent=STR.invalid_code;return;}
+  document.getElementById("joinError").textContent="⏳ "+code+"...";
+  const doJoin=()=>{isHost=false;roomCode=code;conn=peer.connect(code,{reliable:true});setupConn();};
+  if(!peer||peer.destroyed){peer=new Peer(undefined,{host:"0.peerjs.com",port:443,path:"/",secure:true,debug:0});peer.on("open",doJoin);peer.on("error",err=>{document.getElementById("joinError").textContent="⚠️ "+(err.message||err.type);});}
+  else{doJoin();}
+}
+function setupConn(){
+  conn.on("open",()=>{
+    mode="online";resetGameState();
+    document.getElementById("p2Name").textContent=STR.human_opp;
+    document.getElementById("p2Card").className="score-card online-p2";
+    document.getElementById("p2ArenaLabel").textContent=STR.opp_choice;
+    document.getElementById("cpuDisplay").className="arena-choice p2-aura";
+    document.getElementById("onlineStrip").classList.add("show");
+    document.getElementById("stripCode").textContent=roomCode;
+    document.getElementById("stripOpponent").textContent="🟢 "+STR.opp_connected;
+    document.getElementById("disconnectBtn").style.display="block";
+    showScreen("screenGame");showToast(STR.toast_connected);
+  });
+  conn.on("data",handleMsg);
+  conn.on("close",()=>{
+    if(mode!=="online")return;
+    stopCountdown();
+    document.getElementById("stripOpponent").textContent="🔴 "+STR.toast_opp_disco;
+    showToast(STR.toast_opp_disco,4000);setBusy(false);
+    document.getElementById("waitingMsg").classList.remove("show");
+    setChoicesEnabled(false);
+  });
+  conn.on("error",err=>console.warn("conn:",err));
+}
+function handleMsg(data){
+  if(data.type==="choice"){
+    opponentChoice=data.choice;
+    if(myChoice){
+      revealOnline(); // both already chose — show result
+    } else {
+      // Opponent chose first: start countdown
+      startCountdown();
+    }
+  } else if(data.type==="reset"){
+    resetGameState();showToast(STR.toast_reset);
+  }
+}
 function copyCode(){navigator.clipboard.writeText(document.getElementById("myRoomCode").textContent).then(()=>showToast(STR.toast_copied));}
-function resetGameState(){playerScore=0;cpuScore=0;round=1;busy=false;myChoice=null;opponentChoice=null;["playerScore","cpuScore"].forEach(id=>document.getElementById(id).textContent="0");document.getElementById("roundNum").textContent="1";document.getElementById("playerDisplay").textContent="❓";document.getElementById("cpuDisplay").textContent="❓";document.getElementById("playerChoiceName").textContent="—";document.getElementById("cpuChoiceName").textContent="—";document.getElementById("resultBanner").className="result-banner";document.getElementById("resultBanner").innerHTML="";document.getElementById("waitingMsg").classList.remove("show");document.getElementById("thinking").classList.remove("show");document.querySelectorAll(".choice-btn").forEach(b=>b.classList.remove("disabled","selected-glow"));}
-function play(ch){if(busy)return;if(mode==="solo")playSolo(ch);else playOnline(ch);}
-function playSolo(ch){setBusy(true);document.getElementById("playerDisplay").textContent=EMOJIS[ch];anim("playerDisplay");document.getElementById("playerChoiceName").textContent=NAMES[ch];document.getElementById("cpuDisplay").textContent="🤔";document.getElementById("cpuChoiceName").textContent="...";document.getElementById("resultBanner").className="result-banner";document.getElementById("thinking").classList.add("show");setTimeout(()=>{document.getElementById("thinking").classList.remove("show");const cpu=KEYS[Math.floor(Math.random()*KEYS.length)];showResult(ch,cpu,true);setTimeout(()=>setBusy(false),700);},900);}
-function playOnline(ch){if(!conn||!conn.open){showToast(STR.toast_not_conn);return;}myChoice=ch;setBusy(true);document.getElementById("playerDisplay").textContent=EMOJIS[ch];anim("playerDisplay");document.getElementById("playerChoiceName").textContent=NAMES[ch];document.getElementById("cpuDisplay").textContent="⏳";document.getElementById("cpuDisplay").className="arena-choice waiting-aura";document.getElementById("cpuChoiceName").textContent="...";document.getElementById("resultBanner").className="result-banner";document.querySelectorAll(".choice-btn").forEach(b=>b.classList.toggle("selected-glow",b.dataset.ch===ch));conn.send({type:"choice",choice:ch});if(opponentChoice)revealOnline();else document.getElementById("waitingMsg").classList.add("show");}
-function revealOnline(){document.getElementById("waitingMsg").classList.remove("show");document.querySelectorAll(".choice-btn").forEach(b=>b.classList.remove("selected-glow"));const el=document.getElementById("cpuDisplay");el.className="arena-choice p2-aura";el.textContent=EMOJIS[opponentChoice];anim("cpuDisplay");showResult(myChoice,opponentChoice,false);myChoice=null;opponentChoice=null;setTimeout(()=>setBusy(false),700);}
-function showResult(p,cpu,isAI){document.getElementById("cpuChoiceName").textContent=NAMES[cpu];if(isAI){document.getElementById("cpuDisplay").textContent=EMOJIS[cpu];anim("cpuDisplay");}let outcome,mainText,ruleText,quote="";if(p===cpu){outcome="draw";mainText=STR.r_draw;ruleText=STR.r_draw_rule;if(isAI)quote=Q_DRAW[Math.floor(Math.random()*Q_DRAW.length)];}else if(RULES[p]&&RULES[p][cpu]){outcome="win";playerScore++;mainText=STR.r_win;ruleText=RULES[p][cpu];if(isAI)quote=Q_WIN[Math.floor(Math.random()*Q_WIN.length)];triggerBazinga();}else{outcome="lose";cpuScore++;mainText=STR.r_lose;ruleText=RULES[cpu][p];if(isAI)quote=Q_LOSE[Math.floor(Math.random()*Q_LOSE.length)];}document.getElementById("playerScore").textContent=playerScore;document.getElementById("cpuScore").textContent=cpuScore;document.getElementById("roundNum").textContent=++round;const b=document.getElementById("resultBanner");b.className="result-banner show "+outcome;b.innerHTML="<div><div>"+mainText+"</div><span class='result-rule'>"+ruleText+"</span>"+(quote?"<span class='result-rule' style='color:#556;margin-top:3px;display:block;font-style:italic'>&#8220;"+quote+"&#8221;</span>":"")+"</div>";}
+
+/* ── GAME STATE ── */
+function resetGameState(){
+  stopCountdown();
+  playerScore=0;cpuScore=0;round=1;busy=false;myChoice=null;opponentChoice=null;
+  ["playerScore","cpuScore"].forEach(id=>document.getElementById(id).textContent="0");
+  document.getElementById("roundNum").textContent="1";
+  document.getElementById("playerDisplay").textContent="❓";
+  document.getElementById("cpuDisplay").textContent="❓";
+  document.getElementById("playerChoiceName").textContent="—";
+  document.getElementById("cpuChoiceName").textContent="—";
+  document.getElementById("resultBanner").className="result-banner";
+  document.getElementById("resultBanner").innerHTML="";
+  document.getElementById("waitingMsg").classList.remove("show");
+  document.getElementById("thinking").classList.remove("show");
+  document.querySelectorAll(".choice-btn").forEach(b=>b.classList.remove("disabled","selected-glow"));
+}
+
+/* ── PLAY ── */
+function play(ch){
+  if(mode==="solo"){
+    if(busy)return;
+    playSolo(ch);
+  } else {
+    // In online mode: allowed to play even during countdown (stops the timer)
+    if(busy&&!countdownTimer)return;
+    playOnline(ch);
+  }
+}
+function playSolo(ch){
+  setBusy(true);
+  document.getElementById("playerDisplay").textContent=EMOJIS[ch];anim("playerDisplay");
+  document.getElementById("playerChoiceName").textContent=NAMES[ch];
+  document.getElementById("cpuDisplay").textContent="🤔";
+  document.getElementById("cpuChoiceName").textContent="...";
+  document.getElementById("resultBanner").className="result-banner";
+  document.getElementById("thinking").classList.add("show");
+  setTimeout(()=>{
+    document.getElementById("thinking").classList.remove("show");
+    const cpu=KEYS[Math.floor(Math.random()*KEYS.length)];
+    showResult(ch,cpu,true);setTimeout(()=>setBusy(false),700);
+  },900);
+}
+function playOnline(ch){
+  if(!conn||!conn.open){showToast(STR.toast_not_conn);return;}
+  stopCountdown(); // player chose — cancel timer
+  myChoice=ch;setBusy(true);
+  document.getElementById("playerDisplay").textContent=EMOJIS[ch];anim("playerDisplay");
+  document.getElementById("playerChoiceName").textContent=NAMES[ch];
+  document.getElementById("cpuDisplay").textContent="⏳";
+  document.getElementById("cpuDisplay").className="arena-choice waiting-aura";
+  document.getElementById("cpuChoiceName").textContent="...";
+  document.getElementById("resultBanner").className="result-banner";
+  document.querySelectorAll(".choice-btn").forEach(b=>b.classList.toggle("selected-glow",b.dataset.ch===ch));
+  conn.send({type:"choice",choice:ch});
+  if(opponentChoice)revealOnline();
+  else document.getElementById("waitingMsg").classList.add("show");
+}
+function playOnlineCommit(ch){
+  // Auto-play (called by timeout): same as playOnline but no stopCountdown (already stopped)
+  if(!conn||!conn.open)return;
+  myChoice=ch;setBusy(true);
+  document.getElementById("playerDisplay").textContent=EMOJIS[ch];anim("playerDisplay");
+  document.getElementById("playerChoiceName").textContent=NAMES[ch];
+  document.getElementById("resultBanner").className="result-banner";
+  conn.send({type:"choice",choice:ch});
+  if(opponentChoice)revealOnline();
+  else document.getElementById("waitingMsg").classList.add("show");
+}
+function revealOnline(){
+  document.getElementById("waitingMsg").classList.remove("show");
+  document.querySelectorAll(".choice-btn").forEach(b=>b.classList.remove("selected-glow"));
+  const el=document.getElementById("cpuDisplay");
+  el.className="arena-choice p2-aura";el.textContent=EMOJIS[opponentChoice];anim("cpuDisplay");
+  showResult(myChoice,opponentChoice,false);
+  myChoice=null;opponentChoice=null;setTimeout(()=>setBusy(false),700);
+}
+function showResult(p,cpu,isAI){
+  document.getElementById("cpuChoiceName").textContent=NAMES[cpu];
+  if(isAI){document.getElementById("cpuDisplay").textContent=EMOJIS[cpu];anim("cpuDisplay");}
+  let outcome,mainText,ruleText,quote="";
+  if(p===cpu){outcome="draw";mainText=STR.r_draw;ruleText=STR.r_draw_rule;if(isAI)quote=Q_DRAW[Math.floor(Math.random()*Q_DRAW.length)];}
+  else if(RULES[p]&&RULES[p][cpu]){outcome="win";playerScore++;mainText=STR.r_win;ruleText=RULES[p][cpu];if(isAI)quote=Q_WIN[Math.floor(Math.random()*Q_WIN.length)];triggerBazinga();}
+  else{outcome="lose";cpuScore++;mainText=STR.r_lose;ruleText=RULES[cpu][p];if(isAI)quote=Q_LOSE[Math.floor(Math.random()*Q_LOSE.length)];}
+  document.getElementById("playerScore").textContent=playerScore;
+  document.getElementById("cpuScore").textContent=cpuScore;
+  document.getElementById("roundNum").textContent=++round;
+  const b=document.getElementById("resultBanner");
+  b.className="result-banner show "+outcome;
+  b.innerHTML="<div><div>"+mainText+"</div><span class='result-rule'>"+ruleText+"</span>"+(quote?"<span class='result-rule' style='color:#556;margin-top:3px;display:block;font-style:italic'>&#8220;"+quote+"&#8221;</span>":"")+"</div>";
+}
 function anim(id){const el=document.getElementById(id);el.classList.remove("pop-in");void el.offsetWidth;el.classList.add("pop-in");}
 function triggerBazinga(){const o=document.getElementById("bazingaOverlay");o.className="bazinga-overlay";void o.offsetWidth;o.className="bazinga-overlay show";setTimeout(()=>o.className="bazinga-overlay",1800);}
 function toggleRules(){const p=document.getElementById("rulesPanel");p.classList.toggle("open");document.getElementById("rulesArrow").textContent=p.classList.contains("open")?"▲":"▼";}
 function resetGame(){resetGameState();if(mode==="online"&&conn&&conn.open)conn.send({type:"reset"});}
-function goHome(){if(conn){try{conn.close();}catch(e){}conn=null;}if(peer&&!peer.destroyed){try{peer.destroy();}catch(e){}peer=null;}mode="solo";myChoice=null;opponentChoice=null;showScreen("screenMenu");}
+function goHome(){
+  stopCountdown();
+  if(conn){try{conn.close();}catch(e){}conn=null;}
+  if(peer&&!peer.destroyed){try{peer.destroy();}catch(e){}peer=null;}
+  mode="solo";myChoice=null;opponentChoice=null;showScreen("screenMenu");
+}
 </script>
 </body>
 </html>

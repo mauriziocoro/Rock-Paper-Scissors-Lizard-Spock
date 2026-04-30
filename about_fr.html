@@ -6,7 +6,6 @@
 <title>RPSLS Bazinga — À propos</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
-
 :root{--bg:#0a0a14;--surface:#111122;--surface2:#161630;--accent:#00d4ff;--accent2:#ff6b35;--green:#39ff14;--red:#ff2244;--gold:#ffd700;--purple:#9b59b6;--text:#e8e8ff;--subtext:#7788aa;--border:rgba(0,212,255,.2);}
 *{margin:0;padding:0;box-sizing:border-box;}html{font-size:16px;}
 body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-height:100vh;overflow-x:hidden;
@@ -97,6 +96,41 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
 .result-banner.draw{background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.25);color:var(--gold);}
 .result-rule{font-family:"Share Tech Mono",monospace;font-size:10px;font-weight:400;color:var(--subtext);letter-spacing:1px;display:block;margin-top:3px;}
 @keyframes pulse-green{0%{box-shadow:0 0 0 rgba(57,255,20,0)}50%{box-shadow:0 0 30px rgba(57,255,20,.3)}100%{box-shadow:0 0 0 rgba(57,255,20,0)}}
+
+/* ── COUNTDOWN BANNER ── */
+.choice-countdown{
+  display:none; flex-direction:column; align-items:center; gap:6px;
+  padding:14px 16px; margin-bottom:12px;
+  background:rgba(255,34,68,.08);
+  border:2px solid rgba(255,34,68,.5);
+  border-radius:14px;
+  animation:countdown-pulse 0.5s ease-in-out infinite alternate;
+  position:relative; overflow:hidden;
+}
+.choice-countdown::before{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,34,68,.06),transparent);
+  animation:scan 1.5s linear infinite;
+}
+@keyframes scan{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+@keyframes countdown-pulse{0%{border-color:rgba(255,34,68,.4);box-shadow:0 0 12px rgba(255,34,68,.15)}100%{border-color:rgba(255,107,53,.8);box-shadow:0 0 28px rgba(255,34,68,.35)}}
+.choice-countdown.show{display:flex;}
+.countdown-top{display:flex;align-items:center;gap:10px;}
+.countdown-title{font-family:"Orbitron",sans-serif;font-size:clamp(11px,2.5vw,14px);font-weight:900;color:var(--red);letter-spacing:1px;text-transform:uppercase;}
+.countdown-circle{
+  width:52px; height:52px; border-radius:50%;
+  background:var(--surface2);
+  border:3px solid var(--red);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  flex-shrink:0;
+  box-shadow:0 0 16px rgba(255,34,68,.4);
+}
+.countdown-num{font-family:"Orbitron",sans-serif;font-size:22px;font-weight:900;color:var(--red);line-height:1;}
+.countdown-seclabel{font-family:"Share Tech Mono",monospace;font-size:7px;color:var(--subtext);letter-spacing:1px;margin-top:1px;}
+.countdown-bar-wrap{width:100%;height:5px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;}
+.countdown-bar{height:100%;background:linear-gradient(90deg,var(--red),var(--accent2));border-radius:4px;transition:width 0.9s linear;width:100%;}
+.countdown-choose{font-family:"Orbitron",sans-serif;font-size:clamp(13px,3vw,17px);font-weight:900;color:var(--accent2);letter-spacing:3px;text-shadow:0 0 12px rgba(255,107,53,.5);}
+
 .choices-label{font-family:"Share Tech Mono",monospace;font-size:10px;letter-spacing:3px;color:var(--subtext);text-align:center;margin-bottom:10px;text-transform:uppercase;}
 .choices-grid{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;}
 .choice-btn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 8px 9px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;transition:all .2s;width:clamp(60px,17vw,86px);color:var(--text);-webkit-tap-highlight-color:transparent;user-select:none;}
@@ -109,14 +143,21 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
 .choice-btn:active{transform:scale(.95);}
 .choice-btn.disabled{opacity:.35;pointer-events:none;}
 .choice-btn.selected-glow{border-color:var(--gold)!important;box-shadow:0 0 18px rgba(255,215,0,.4)!important;}
+/* Urgent pulse on buttons when countdown active */
+.countdown-urgent .choice-btn:not(.disabled){
+  animation:btn-urgent 0.4s ease-in-out infinite alternate;
+}
+@keyframes btn-urgent{0%{border-color:var(--border)}100%{border-color:rgba(255,34,68,.5);box-shadow:0 0 10px rgba(255,34,68,.2)}}
 .choice-emoji{font-size:clamp(26px,6.5vw,34px);line-height:1;}
 .choice-name{font-family:"Orbitron",sans-serif;font-size:clamp(6px,1.3vw,8px);font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--subtext);text-align:center;}
+
 .waiting-msg,.thinking{display:none;justify-content:center;align-items:center;gap:9px;margin-bottom:10px;padding:9px;font-family:"Share Tech Mono",monospace;font-size:11px;border-radius:8px;}
 .waiting-msg{color:var(--gold);background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.2);}
 .waiting-msg.show,.thinking.show{display:flex;}.thinking{color:var(--accent2);}
 .dot{width:6px;height:6px;border-radius:50%;background:currentColor;animation:bounce .6s ease-in-out infinite;}
 .dot:nth-child(2){animation-delay:.1s;}.dot:nth-child(3){animation-delay:.2s;}
 @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+
 .rules-toggle{display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-family:"Share Tech Mono",monospace;font-size:10px;letter-spacing:2px;color:var(--subtext);padding:7px;border:1px solid var(--border);border-radius:8px;background:var(--surface);margin:0 auto 10px;max-width:220px;transition:all .2s;text-transform:uppercase;}
 .rules-toggle:hover{color:var(--accent);border-color:var(--accent);}
 .rules-panel{display:none;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:14px;}
@@ -141,10 +182,9 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
 .footer span{color:var(--accent);}
 .footer-info-link{display:inline-block;margin-left:12px;color:var(--subtext);font-family:"Share Tech Mono",monospace;font-size:10px;letter-spacing:1px;text-decoration:none;transition:color .2s;}
 .footer-info-link:hover{color:var(--accent);}
-@media(max-width:400px){.choices-grid{gap:6px;}.choice-btn{width:clamp(56px,16vw,72px);padding:10px 6px 8px;}.arena{padding:14px 8px;min-height:130px;}.scoreboard{gap:7px;}.lobby-box{padding:18px 14px;}.room-code-value{letter-spacing:3px;}.join-input{font-size:20px;letter-spacing:4px;}}
+@media(max-width:400px){.choices-grid{gap:6px;}.choice-btn{width:clamp(56px,16vw,72px);padding:10px 6px 8px;}.arena{padding:14px 8px;min-height:130px;}.scoreboard{gap:7px;}.lobby-box{padding:18px 14px;}.room-code-value{letter-spacing:3px;}.join-input{font-size:20px;letter-spacing:4px;}.countdown-title{font-size:11px;}.countdown-circle{width:44px;height:44px;}.countdown-num{font-size:18px;}}
 @media(max-width:340px){.choices-grid{gap:5px;}.choice-btn{width:54px;}.logo-title{font-size:18px;}}
 
-/* ── ABOUT-SPECIFIC STYLES ── */
 .about-container{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:72px 16px 60px;}
 .about-back{display:inline-flex;align-items:center;gap:6px;background:transparent;border:none;cursor:pointer;font-family:"Share Tech Mono",monospace;font-size:11px;letter-spacing:2px;color:var(--subtext);margin-bottom:20px;padding:4px 0;transition:color .2s;text-decoration:none;}
 .about-back:hover{color:var(--accent);}
@@ -163,7 +203,7 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
 .about-section p strong{color:var(--text);}
 .about-section p a{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(0,212,255,.3);transition:border-color .2s;}
 .about-section p a:hover{border-color:var(--accent);}
-.about-section p em{color:var(--subtext);font-style:italic;}
+.about-section p em{font-style:italic;}
 .privacy-list{list-style:none;padding:0;margin:12px 0 0;display:flex;flex-direction:column;gap:8px;}
 .privacy-list li{display:flex;align-items:flex-start;gap:10px;font-size:clamp(12px,2.5vw,13px);color:var(--subtext);line-height:1.6;}
 .privacy-list li::before{content:"✓";color:var(--green);font-family:"Orbitron",sans-serif;font-weight:900;font-size:12px;flex-shrink:0;margin-top:2px;}
@@ -176,7 +216,7 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
 .legal-box p{font-size:11px;color:var(--subtext);line-height:1.65;margin-bottom:8px;}
 .legal-box p:last-child{margin-bottom:0;}
 .legal-box p strong{color:var(--text);}
-.legal-box p em{color:var(--subtext);font-style:italic;}
+.legal-box p em{font-style:italic;}
 .copyright-notice{text-align:center;padding:16px;font-family:"Share Tech Mono",monospace;font-size:10px;color:#445;letter-spacing:1px;line-height:1.7;margin-top:8px;border-top:1px solid var(--border);}
 .copyright-notice span{color:var(--subtext);}
 @media(max-width:480px){.about-section{padding:18px 14px;}.about-section::before{width:2px;}}
@@ -184,31 +224,24 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
 </head>
 <body>
 <div class="stars"></div>
-
-<!-- LANG BAR -->
 <div class="lang-bar">
   <label for="langSel">Langue:</label>
-  <select class="lang-select" id="langSel" onchange="switchLang(this.value)">
+  <select class="lang-select" id="langSel" onchange="window.location.href='about_'+this.value+'.html'">
     <option value="it">🇮🇹 Italiano</option>
 <option value="en">🇬🇧 English</option>
 <option value="fr" selected>🇫🇷 Français</option>
 <option value="es">🇪🇸 Español</option>
 <option value="de">🇩🇪 Deutsch</option>
+<option value="tlh">⚔️ tlhIngan Hol</option>
   </select>
 </div>
-
 <div class="about-container">
-
   <a class="about-back" href="index_fr.html">← Retour au jeu</a>
-
-  <!-- Hero -->
   <div class="about-hero">
     <span class="about-hero-icon">🖖</span>
     <div class="about-hero-title">ROCK·PAPER·SCISSORS<br>LIZARD·SPOCK</div>
     <div class="about-hero-sub">⚡ Bazinga Edition — À propos ⚡</div>
   </div>
-
-  <!-- Author -->
   <div class="about-section">
     <div class="about-section-title">👨‍💻 Auteur & Développement</div>
     <p>Ce projet est un jeu de fans non commercial développé par un particulier avec l'aide de <strong>Claude</strong>, l'assistant IA développé par <a href="https://www.anthropic.com" target="_blank" rel="noopener">Anthropic</a>. Claude a été utilisé pour la génération du code HTML, CSS et JavaScript, ainsi que pour la localisation multilingue.</p>
@@ -221,19 +254,14 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
       </div>
     </div>
   </div>
-
-  <!-- Privacy -->
   <div class="about-section privacy-sec">
     <div class="about-section-title">🔒 Confidentialité & Données</div>
     <p>Ce jeu est conçu dans le plein respect de la vie privée des utilisateurs.</p>
-    <ul class="privacy-list">
-      <li>Aucune donnée personnelle n'est collectée, stockée ou traitée.</li><li>Aucun système de suivi, d'analyse ou de profilage n'est implémenté.</li><li>Aucun cookie de profilage ni outil de surveillance tiers n'est utilisé.</li><li>Le mode en ligne utilise des connexions WebRTC pair-à-pair directes via PeerJS. Aucune donnée de jeu n'est enregistrée sur un serveur.</li><li>L'intégralité du code source s'exécute localement dans le navigateur de l'utilisateur.</li>
-    </ul>
+    <ul class="privacy-list"><li>Aucune donnée personnelle n'est collectée, stockée ou traitée.</li><li>Aucun système de suivi, d'analyse ou de profilage n'est implémenté.</li><li>Aucun cookie de profilage ni outil de surveillance tiers n'est utilisé.</li><li>Le mode en ligne utilise des connexions WebRTC pair-à-pair directes via PeerJS. Aucune donnée de jeu n'est enregistrée sur un serveur.</li><li>L'intégralité du code source s'exécute localement dans le navigateur de l'utilisateur.</li></ul>
   </div>
-
-  <!-- Legal -->
   <div class="about-section legal-sec">
     <div class="about-section-title">⚖️ Mentions Légales & Droits d'Auteur</div>
+    
     <div class="legal-box">
       <div class="legal-box-title">© Copyright Notice</div>
       <p><em>The Big Bang Theory</em> est une série télévisée créée par Chuck Lorre et Bill Prady. Tous les droits relatifs au titre, aux personnages (dont Sheldon Cooper), aux marques déposées et aux contenus originaux de la série appartiennent exclusivement à leurs titulaires respectifs, notamment <strong>Chuck Lorre Productions, Inc.</strong>, <strong>Warner Bros. Television</strong> et/ou <strong>CBS Studios</strong>.</p>
@@ -242,14 +270,10 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
     <p style="margin-top:14px">Ce projet est une œuvre de fans (<em>fan project</em>) créée à des fins strictement amateurs, éducatives et non commerciales. Il n'est affilié à, approuvé par, parrainé par, ni autorisé par aucun des titulaires de droits mentionnés ci-dessus. Les références aux noms, personnages et citations tirés de la série sont effectuées dans le cadre du <em>fair use</em> / <em>fair dealing</em>, à des fins de commentaire, de parodie et d'hommage culturel, et ne visent en aucun cas à porter atteinte à un droit d'auteur, une marque déposée ou tout autre droit de propriété intellectuelle.</p>
     <p>Si un titulaire de droits estime que ce projet lèse ses intérêts, il est invité à contacter l'auteur pour une suppression immédiate des contenus.</p>
   </div>
-
-  <!-- Disclaimer -->
   <div class="about-section disclaimer-sec">
     <div class="about-section-title">⚠️ Clause de Non-Responsabilité</div>
     <p>Ce logiciel est fourni « en l'état » (<em>as-is</em>), sans garantie d'aucune sorte, expresse ou implicite. L'auteur décline toute responsabilité pour les dommages éventuels résultant de l'utilisation de ce jeu.</p>
   </div>
-
-  <!-- Copyright footer -->
   <div class="copyright-notice">
     <span>THE BIG BANG THEORY™ © Chuck Lorre Productions, Inc. &amp; Warner Bros. Television.</span><br>
     All rights reserved. All trademarks are the property of their respective owners.<br>
@@ -257,11 +281,6 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
     Rock Paper Scissors Lizard Spock rules invented by Sam Kass &amp; Karen Bryla.<br>
     Fan project 2024–2025 · Developed with Claude (Anthropic) · No rights infringement intended.
   </div>
-
 </div>
-
-<script>
-function switchLang(code){window.location.href="about_"+code+".html";}
-</script>
 </body>
 </html>

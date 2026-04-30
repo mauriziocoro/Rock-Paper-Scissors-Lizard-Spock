@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="tlh">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rock Paper Scissors Lizard Spock — Bazinga! (Français)</title>
+<title>Rock Paper Scissors Lizard Spock — Bazinga! (tlhIngan Hol)</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
 <style>
@@ -192,14 +192,14 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
 <div class="bazinga-overlay" id="bazingaOverlay"><div class="bazinga-text">BAZINGA!</div></div>
 <div class="toast" id="toast"></div>
 <div class="lang-bar">
-  <label for="langSel">Langue:</label>
+  <label for="langSel">Hol:</label>
   <select class="lang-select" id="langSel" onchange="switchLang(this.value)">
     <option value="it">🇮🇹 Italiano</option>
 <option value="en">🇬🇧 English</option>
-<option value="fr" selected>🇫🇷 Français</option>
+<option value="fr">🇫🇷 Français</option>
 <option value="es">🇪🇸 Español</option>
 <option value="de">🇩🇪 Deutsch</option>
-<option value="tlh">⚔️ tlhIngan Hol</option>
+<option value="tlh" selected>⚔️ tlhIngan Hol</option>
   </select>
 </div>
 
@@ -207,26 +207,26 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
 <div class="screen active" id="screenMenu">
   <div class="container">
     <div class="header">
-      <div class="logo-top">📡 Caltech Theoretical Physics Dept.</div>
-      <div class="logo-title">ROCK·PAPER·SCISSORS<br>LIZARD·SPOCK</div>
+      <div class="logo-top">📡 Caltech Hap 'ampaS</div>
+      <div class="logo-title">NAGH·NAV·taQbang<br>ghargh·SPOCK</div>
       <div class="logo-sub">⚡ BAZINGA EDITION ⚡</div>
-      <div class="sheldon-quote">"Les ciseaux coupent le papier, le papier recouvre la roche, la roche écrase le lézard, le lézard empoisonne Spock, Spock brise les ciseaux, les ciseaux décapitent le lézard, le lézard mange le papier, le papier réfute Spock, Spock vaporise la roche, et comme il l'a toujours été, la roche écrase les ciseaux." — Sheldon Cooper</div>
+      <div class="sheldon-quote">"taQbang nav chu'bej, nav nagh buSHa'moH, nagh ghargh '-ugh, ghargh Spock Sop, Spock taQbang QIH, taQbang ghargh nach woH, ghargh nav Sop, nav Spock lughbe' ja', Spock nagh chelHa', 'ej reH rur, nagh taQbang QIH." — Sheldon Cooper</div>
     </div>
     <div class="mode-grid">
       <div class="mode-card" onclick="startSolo()">
         <span class="mode-icon">🤖</span>
-        <div class="mode-title">VS SHELDON IA</div>
-        <div class="mode-desc">Défiez l'intelligence artificielle de Sheldon Cooper. Pouvez-vous battre un QI de 187 ?</div>
-        <div class="mode-badge">UN SEUL JOUEUR</div>
+        <div class="mode-title">VS SHELDON QI'</div>
+        <div class="mode-desc">Sheldon Cooper QI' ghaH DoS. 187 IQ Dalo' DaqawmoH?</div>
+        <div class="mode-badge">wa' SuvwI'</div>
       </div>
       <div class="mode-card online-card" onclick="showLobby()">
         <span class="mode-icon">🌐</span>
-        <div class="mode-title">EN LIGNE 1 vs 1</div>
-        <div class="mode-desc">Jouez en temps réel contre un ami. Créez une salle et partagez le code.</div>
-        <div class="mode-badge">MULTIJOUEUR</div>
+        <div class="mode-title">QI'YAQ 1 vs 1</div>
+        <div class="mode-desc">jagh vIghro' retlhDaq bIQaw'. pa' yIchenmoH 'ej chaw' yInob.</div>
+        <div class="mode-badge">'op SuvwI'mey</div>
       </div>
     </div>
-    <div class="footer">Made with 💙 for fans of <span>The Big Bang Theory</span> · BAZINGA! <a class="footer-info-link" href="about_fr.html">ℹ️ Info</a></div>
+    <div class="footer">Made with 💙 for fans of <span>The Big Bang Theory</span> · BAZINGA! <a class="footer-info-link" href="about_tlh.html">ℹ️ De'</a></div>
   </div>
 </div>
 
@@ -234,76 +234,76 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
 <div class="screen" id="screenLobby">
   <div class="container">
     <div class="header">
-      <div class="logo-top">📡 Caltech Theoretical Physics Dept.</div>
-      <div class="logo-title">ROCK·PAPER·SCISSORS<br>LIZARD·SPOCK</div>
+      <div class="logo-top">📡 Caltech Hap 'ampaS</div>
+      <div class="logo-title">NAGH·NAV·taQbang<br>ghargh·SPOCK</div>
     </div>
     <div class="lobby-box">
-      <div class="lobby-title">🌐 CONNEXION EN LIGNE</div>
+      <div class="lobby-title">🌐 QI'YAQ CHOTLHMOH</div>
       <div class="status-bar">
         <div class="status-dot connecting" id="lobbyStatusDot"></div>
-        <span id="lobbyStatusText">Connexion au serveur en cours...</span>
+        <span id="lobbyStatusText">jabbI'ID tISaH...</span>
       </div>
       <div class="lobby-tabs">
-        <button class="lobby-tab active" id="tabCreate" onclick="switchTab('create')">➕ CRÉER SALLE</button>
-        <button class="lobby-tab" id="tabJoin" onclick="switchTab('join')">🔗 REJOINDRE</button>
+        <button class="lobby-tab active" id="tabCreate" onclick="switchTab('create')">➕ PA' YICHENMOH</button>
+        <button class="lobby-tab" id="tabJoin" onclick="switchTab('join')">🔗 YI'EL</button>
       </div>
       <div id="panelCreate">
         <div class="room-code-display">
-          <div class="room-code-label">Votre code de salle</div>
+          <div class="room-code-label">pa' HaSta</div>
           <div class="room-code-value" id="myRoomCode">------</div>
-          <div class="room-code-hint">Partagez ce code avec votre adversaire.<br>La partie commence dès qu'il se connecte.</div>
+          <div class="room-code-hint">jagh HaSta yInob.<br>may' taHjaj.</div>
         </div>
-        <button class="copy-btn" onclick="copyCode()">📋 Copier le code</button>
-        <div style="margin-top:11px;text-align:center;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--subtext)">🕐 En attente de l'adversaire...</div>
+        <button class="copy-btn" onclick="copyCode()">📋 HaSta tISaH</button>
+        <div style="margin-top:11px;text-align:center;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--subtext)">🕐 jagh vIjemlu'...</div>
       </div>
       <div id="panelJoin" style="display:none">
         <input class="join-input" id="joinCodeInput" type="text" maxlength="6"
-          placeholder="Code de salle..." oninput="this.value=this.value.toUpperCase()" />
-        <button class="join-btn" onclick="joinRoom()">🖖 SE CONNECTER</button>
+          placeholder="pa' HaSta..." oninput="this.value=this.value.toUpperCase()" />
+        <button class="join-btn" onclick="joinRoom()">🖖 YICHOTLH</button>
         <div style="margin-top:9px;text-align:center;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--subtext)" id="joinError"></div>
       </div>
     </div>
-    <button class="back-btn" onclick="goHome()">← Retour au menu</button>
+    <button class="back-btn" onclick="goHome()">← qach yIjaH</button>
   </div>
 </div>
 
 <!-- SCREEN: GAME -->
 <div class="screen" id="screenGame">
   <div class="container">
-    <button class="back-btn" onclick="goHome()">← Menu</button>
+    <button class="back-btn" onclick="goHome()">← qach</button>
     <div class="online-strip" id="onlineStrip">
       <div class="online-strip-left">
         <div class="status-dot connected"></div>
-        <span>EN LIGNE · Salle</span>
+        <span>QI'YAQ · pa'</span>
         <span class="online-code" id="stripCode">------</span>
       </div>
-      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--subtext)" id="stripOpponent">Adversaire connecté</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--subtext)" id="stripOpponent">jagh chotlhlu'</div>
     </div>
     <div class="scoreboard">
       <div class="score-card">
-        <div class="score-label">Joueur</div>
-        <div class="score-name" id="p1Name">⚛️ VOUS</div>
+        <div class="score-label">SuvwI'</div>
+        <div class="score-name" id="p1Name">⚛️ SoH</div>
         <div class="score-num" id="playerScore">0</div>
       </div>
       <div style="text-align:center">
         <div class="vs-text">VS</div>
-        <div class="round-info">Manche <span id="roundNum">1</span></div>
+        <div class="round-info">may' <span id="roundNum">1</span></div>
       </div>
       <div class="score-card" id="p2Card">
-        <div class="score-label">Adversaire</div>
+        <div class="score-label">jagh</div>
         <div class="score-name" id="p2Name">🤖 SHELDON</div>
         <div class="score-num" id="cpuScore">0</div>
       </div>
     </div>
     <div class="arena">
       <div class="arena-side">
-        <div class="arena-label">Votre choix</div>
+        <div class="arena-label">bIwIv</div>
         <div class="arena-choice player-aura" id="playerDisplay">❓</div>
         <div class="arena-choice-name" id="playerChoiceName">—</div>
       </div>
       <div class="arena-divider"><div class="vs-badge">VS</div></div>
       <div class="arena-side">
-        <div class="arena-label" id="p2ArenaLabel">Sheldon choisit</div>
+        <div class="arena-label" id="p2ArenaLabel">Sheldon wIv</div>
         <div class="arena-choice cpu-aura" id="cpuDisplay">❓</div>
         <div class="arena-choice-name" id="cpuChoiceName">—</div>
       </div>
@@ -311,11 +311,11 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
 
     <div class="thinking" id="thinking">
       <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-      <span>Sheldon calcule...</span>
+      <span>Sheldon buSlu'...</span>
     </div>
     <div class="waiting-msg" id="waitingMsg">
       <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-      <span>Coup envoyé — en attente de l'adversaire...</span>
+      <span>mIw ngeH — jagh DIvI'...</span>
     </div>
 
     <!-- COUNTDOWN BANNER (online only, opponent chose first) -->
@@ -323,68 +323,68 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
       <div class="countdown-top">
         <div class="countdown-circle">
           <div class="countdown-num" id="countdownNum">5</div>
-          <div class="countdown-seclabel">secondes</div>
+          <div class="countdown-seclabel">tup'a'mey</div>
         </div>
         <div>
-          <div class="countdown-title">⚡ L'ADVERSAIRE A CHOISI !</div>
-          <div class="countdown-choose">CHOISISSEZ!</div>
+          <div class="countdown-title">⚡ jagh wIvpu'!</div>
+          <div class="countdown-choose">DaH yIwIv!</div>
         </div>
       </div>
       <div class="countdown-bar-wrap"><div class="countdown-bar" id="countdownBar"></div></div>
     </div>
 
     <div class="result-banner" id="resultBanner"></div>
-    <div class="choices-label">— Choisissez votre coup —</div>
+    <div class="choices-label">— yIwIv —</div>
     <div class="choices-grid" id="choicesGrid">
-      <button class="choice-btn rock"     data-ch="rock"     onclick="play('rock')"    ><div class="choice-emoji">✊</div><div class="choice-name">Pierre</div></button>
-      <button class="choice-btn paper"    data-ch="paper"    onclick="play('paper')"   ><div class="choice-emoji">🖐️</div><div class="choice-name">Papier</div></button>
-      <button class="choice-btn scissors" data-ch="scissors" onclick="play('scissors')"><div class="choice-emoji">✌️</div><div class="choice-name">Ciseaux</div></button>
-      <button class="choice-btn lizard"   data-ch="lizard"   onclick="play('lizard')"  ><div class="choice-emoji">🦎</div><div class="choice-name">Lézard</div></button>
+      <button class="choice-btn rock"     data-ch="rock"     onclick="play('rock')"    ><div class="choice-emoji">✊</div><div class="choice-name">nagh</div></button>
+      <button class="choice-btn paper"    data-ch="paper"    onclick="play('paper')"   ><div class="choice-emoji">🖐️</div><div class="choice-name">nav</div></button>
+      <button class="choice-btn scissors" data-ch="scissors" onclick="play('scissors')"><div class="choice-emoji">✌️</div><div class="choice-name">taQbang</div></button>
+      <button class="choice-btn lizard"   data-ch="lizard"   onclick="play('lizard')"  ><div class="choice-emoji">🦎</div><div class="choice-name">ghargh</div></button>
       <button class="choice-btn spock"    data-ch="spock"    onclick="play('spock')"   ><div class="choice-emoji">🖖</div><div class="choice-name">Spock</div></button>
     </div>
-    <div class="rules-toggle" onclick="toggleRules()">📋 <span>Règles</span> <span id="rulesArrow">▼</span></div>
+    <div class="rules-toggle" onclick="toggleRules()">📋 <span>chutmey</span> <span id="rulesArrow">▼</span></div>
     <div class="rules-panel" id="rulesPanel">
-      <div class="rules-title">// TABLE DES VICTOIRES //</div>
+      <div class="rules-title">// QAP MUVMEY //</div>
       <div class="rules-grid">
-        <div class="rule-item">✌️ <span>Ciseaux</span> · Ciseaux coupent Papier</div>
-        <div class="rule-item">🖐️ <span>Papier</span> · Papier couvre Pierre</div>
-        <div class="rule-item">✊ <span>Pierre</span> · Pierre écrase Lézard</div>
-        <div class="rule-item">🦎 <span>Lézard</span> · Lézard empoisonne Spock</div>
-        <div class="rule-item">🖖 <span>Spock</span> · Spock brise Ciseaux</div>
-        <div class="rule-item">✌️ <span>Ciseaux</span> · Ciseaux décapitent Lézard</div>
-        <div class="rule-item">🦎 <span>Lézard</span> · Lézard mange Papier</div>
-        <div class="rule-item">🖐️ <span>Papier</span> · Papier réfute Spock</div>
-        <div class="rule-item">🖖 <span>Spock</span> · Spock vaporise Pierre</div>
-        <div class="rule-item">✊ <span>Pierre</span> · Pierre écrase Ciseaux</div>
+        <div class="rule-item">✌️ <span>taQbang</span> · taQbang nav chu'bej</div>
+        <div class="rule-item">🖐️ <span>nav</span> · nav nagh buSHa'moH</div>
+        <div class="rule-item">✊ <span>nagh</span> · nagh ghargh 'ugh</div>
+        <div class="rule-item">🦎 <span>ghargh</span> · ghargh Spock Sop</div>
+        <div class="rule-item">🖖 <span>Spock</span> · Spock taQbang QIH</div>
+        <div class="rule-item">✌️ <span>taQbang</span> · taQbang ghargh nach woH</div>
+        <div class="rule-item">🦎 <span>ghargh</span> · ghargh nav Sop</div>
+        <div class="rule-item">🖐️ <span>nav</span> · nav Spock lughbe' ja'</div>
+        <div class="rule-item">🖖 <span>Spock</span> · Spock nagh chelHa'</div>
+        <div class="rule-item">✊ <span>nagh</span> · nagh taQbang QIH</div>
       </div>
     </div>
-    <button class="reset-btn" onclick="resetGame()">↺ RÉINITIALISER</button>
-    <button class="disconnect-btn" id="disconnectBtn" style="display:none" onclick="goHome()">✕ Déconnecter</button>
-    <div class="footer">Made with 💙 for fans of <span>The Big Bang Theory</span> · BAZINGA! <a class="footer-info-link" href="about_fr.html">ℹ️ Info</a></div>
+    <button class="reset-btn" onclick="resetGame()">↺ mI' yIchev</button>
+    <button class="disconnect-btn" id="disconnectBtn" style="display:none" onclick="goHome()">✕ yImev</button>
+    <div class="footer">Made with 💙 for fans of <span>The Big Bang Theory</span> · BAZINGA! <a class="footer-info-link" href="about_tlh.html">ℹ️ De'</a></div>
   </div>
 </div>
 
 <script>
 const EMOJIS={rock:"✊",paper:"🖐️",scissors:"✌️",lizard:"🦎",spock:"🖖"};
-const NAMES={rock:"Pierre",paper:"Papier",scissors:"Ciseaux",lizard:"Lézard",spock:"Spock"};
+const NAMES={rock:"nagh",paper:"nav",scissors:"taQbang",lizard:"ghargh",spock:"Spock"};
 const RULES={
-  scissors:{paper:"Ciseaux coupent Papier",lizard:"Ciseaux décapitent Lézard"},
-  paper:{rock:"Papier couvre Pierre",spock:"Papier réfute Spock"},
-  rock:{lizard:"Pierre écrase Lézard",scissors:"Pierre écrase Ciseaux"},
-  lizard:{spock:"Lézard empoisonne Spock",paper:"Lézard mange Papier"},
-  spock:{scissors:"Spock brise Ciseaux",rock:"Spock vaporise Pierre"}
+  scissors:{paper:"taQbang nav chu'bej",lizard:"taQbang ghargh nach woH"},
+  paper:{rock:"nav nagh buSHa'moH",spock:"nav Spock lughbe' ja'"},
+  rock:{lizard:"nagh ghargh 'ugh",scissors:"nagh taQbang QIH"},
+  lizard:{spock:"ghargh Spock Sop",paper:"ghargh nav Sop"},
+  spock:{scissors:"Spock taQbang QIH",rock:"Spock nagh chelHa'"}
 };
 const KEYS=Object.keys(EMOJIS);
-const Q_LOSE=["Évidemment j\'ai gagné. Je suis Sheldon Cooper.","Comme prévu par la théorie des probabilités.","Votre coup était statistiquement prévisible.","Mon QI de 187 s\'est avéré utile.","Bazinga ! Non, cette fois j\'ai vraiment gagné."];const Q_WIN=["Impossible ! Recalcul en cours...","Vous avez gagné par chance. Erreur dans mon algorithme.","Note mentale : améliorer la stratégie à 97,3 %.","C\'est inacceptable. Je veux récupérer ma place.","Bazinga ! (cette fois ça ne marche pas, je sais)"];const Q_DRAW=["Égalité. Comme le chat de Schrödinger.","Match nul ? La probabilité était de 20 %. Exactement.","Personne ne gagne. Comme la paix de Kant.","Curieusement insatisfaisant."];
+const Q_LOSE=["jIQap. jIH Sheldon Cooper.","vay\' DIvI\' wIv buSlaw\'.","bIwIv wIvmoHlaH.","187 IQ vIHutlh.","Bazinga! ghobe\', DaH jIQapbej."];const Q_WIN=["Qo\'! jISIv!","DaQaplaHpu\'. Qagh vIghro\' wIvvam.","tugh: 97.3% vIcherqa\'.","vIparHa\'be\'. Daq vIghaj.","Bazinga! (DaH Qapbe\', vISov)"];const Q_DRAW=["rap maH. Schroedinger vIghro\' rur.","rap? 20% DIvI\'. maj.","pagh Qap. rIntaH.","Qatlh \'oH."];
 const STR={
-  r_win:"🏆 VOUS GAGNEZ !",r_lose:"💀 VOUS PERDEZ !",r_draw:"🤝 ÉGALITÉ !",r_draw_rule:"Même choix — aucun point",
-  toast_copied:"✅ Code copié !",toast_connected:"🖖 Connecté ! Que la partie commence !",
-  toast_not_conn:"⚠️ Non connecté !",toast_opp_disco:"⚠️ Adversaire déconnecté",
-  toast_reset:"↺ L'adversaire a réinitialisé le score",net_error:"Erreur réseau — réessayez dans un moment",invalid_code:"⚠️ Code invalide",
-  opp_connected:"Adversaire connecté",sheldon_name:"🤖 SHELDON",human_opp:"👾 ADVERSAIRE",
-  you_name:"⚛️ VOUS",sheldon_choice:"Sheldon choisit",opp_choice:"L'adversaire choisit",
-  connecting:"Connexion au serveur en cours...",server_ready:"Prêt — partagez le code avec votre adversaire",online_room:"EN LIGNE · Salle",
-  countdown_auto:"Temps écoulé — coup aléatoire joué !"
+  r_win:"🏆 bIQaplaH!",r_lose:"💀 bIlujpu'!",r_draw:"🤝 rap maH!",r_draw_rule:"rap wIv — ghap mI'",
+  toast_copied:"✅ HaSta tISaH!",toast_connected:"🖖 chotlhlu'! may' yItagh!",
+  toast_not_conn:"⚠️ chotlhbe'lu'!",toast_opp_disco:"⚠️ jagh Qaw'lu'",
+  toast_reset:"↺ jagh mI' yIchev",net_error:"QI'yaQ Qagh — yInIDqa'",invalid_code:"⚠️ HaSta Daj",
+  opp_connected:"jagh chotlhlu'",sheldon_name:"🤖 SHELDON",human_opp:"👾 jagh",
+  you_name:"⚛️ SoH",sheldon_choice:"Sheldon wIv",opp_choice:"jagh wIv",
+  connecting:"jabbI'ID tISaH...",server_ready:"HIvje' yIbuS — jagh yIchaw' nob",online_room:"QI'YAQ · pa'",
+  countdown_auto:"pIj bI'elHa' — mIw mamI' wIvlu'!"
 };
 
 const COUNTDOWN_SECS = 5;
