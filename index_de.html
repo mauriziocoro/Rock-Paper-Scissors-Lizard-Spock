@@ -364,6 +364,36 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
 .footer-info-link{display:inline-block;margin-left:12px;color:var(--subtext);font-family:"Share Tech Mono",monospace;
   font-size:10px;letter-spacing:1px;text-decoration:none;transition:color .2s;}
 .footer-info-link:hover{color:var(--accent);}
+.name-input{
+  width:100%;padding:10px 13px;background:var(--surface2);
+  border:1.5px solid var(--border);border-radius:9px;
+  color:var(--text);font-family:"Orbitron",sans-serif;font-size:14px;
+  font-weight:700;letter-spacing:1px;outline:none;transition:border-color .2s;
+}
+.name-input:focus{border-color:var(--accent);}
+.name-input::placeholder{color:var(--subtext);font-weight:400;font-size:12px;letter-spacing:1px;}
+/* Lobby name row */
+.lobby-name-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;
+  padding:10px 13px;background:var(--surface2);border:1.5px solid var(--border);
+  border-radius:9px;transition:border-color .2s;}
+.lobby-name-row:focus-within{border-color:var(--accent);}
+.lobby-name-icon{font-size:16px;flex-shrink:0;}
+.lobby-name-input{flex:1;background:transparent;border:none;outline:none;
+  color:var(--text);font-family:"Orbitron",sans-serif;font-size:13px;
+  font-weight:700;letter-spacing:1px;}
+.lobby-name-input::placeholder{color:var(--subtext);font-weight:400;font-size:11px;}
+/* Refresh code button */
+.refresh-code-btn{display:flex;align-items:center;justify-content:center;gap:7px;
+  width:100%;margin-top:9px;padding:8px;
+  background:transparent;border:1px solid var(--border);border-radius:8px;
+  color:var(--subtext);font-family:"Share Tech Mono",monospace;
+  font-size:10px;letter-spacing:2px;cursor:pointer;transition:all .2s;text-transform:uppercase;}
+.refresh-code-btn:hover{color:var(--accent);border-color:var(--accent);background:rgba(0,212,255,.06);}
+.refresh-code-btn:active{transform:scale(.97);}
+/* Full-room error style */
+.join-error-full{color:var(--red)!important;font-size:11px!important;font-weight:700;
+  background:rgba(255,34,68,.08);border:1px solid rgba(255,34,68,.3);
+  border-radius:7px;padding:8px 12px;margin-top:8px;text-align:center;}
 @media(max-width:400px){
   .choices-grid{gap:6px;}.choice-btn{width:clamp(56px,16vw,72px);padding:10px 6px 8px;}
   .arena{padding:14px 8px;min-height:130px;}.scoreboard{gap:7px;}
@@ -388,6 +418,15 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
     <button class="settings-close" onclick="Settings.closePanel()">✕</button>
   </div>
   <div class="settings-body">
+    <!-- Player name -->
+    <div class="settings-section">
+      <div class="settings-section-title">👤 Dein Name</div>
+      <input class="name-input" id="playerNameInput" type="text"
+        maxlength="20" autocomplete="off" autocorrect="off" spellcheck="false"
+        placeholder="Spieler"
+        oninput="Settings.setPlayerName(this.value)" />
+    </div>
+    <div class="settings-divider"></div>
     <!-- Audio -->
     <div class="settings-section">
       <div class="settings-section-title">🔊 Audio</div>
@@ -491,6 +530,14 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
         <div class="status-dot connecting" id="lobbyStatusDot"></div>
         <span id="lobbyStatusText">Verbindung zum Server wird hergestellt...</span>
       </div>
+      <!-- Name input (synced with settings) -->
+      <div class="lobby-name-row">
+        <span class="lobby-name-icon">👤</span>
+        <input class="lobby-name-input" id="lobbyNameInput" type="text"
+          maxlength="20" autocomplete="off" autocorrect="off" spellcheck="false"
+          placeholder="Spieler"
+          oninput="Settings.setPlayerName(this.value); syncLobbyName();" />
+      </div>
       <div class="lobby-tabs">
         <button class="lobby-tab active" id="tabCreate" onclick="switchTab('create')">➕ RAUM ERSTELLEN</button>
         <button class="lobby-tab" id="tabJoin" onclick="switchTab('join')">🔗 BEITRETEN</button>
@@ -502,13 +549,16 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
           <div class="room-code-hint">Teile diesen Code.<br>Das Spiel beginnt sobald er sich verbindet.</div>
         </div>
         <button class="copy-btn" onclick="copyCode()">📋 Code kopieren</button>
-        <div style="margin-top:11px;text-align:center;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--subtext)">🕐 Warte auf Gegner...</div>
+        <button class="refresh-code-btn" id="refreshCodeBtn" onclick="refreshCode()">
+          ↺ ↺ Neuer Code
+        </button>
+        <div style="margin-top:10px;text-align:center;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--subtext)">🕐 Warte auf Gegner...</div>
       </div>
       <div id="panelJoin" style="display:none">
         <input class="join-input" id="joinCodeInput" type="text" maxlength="6"
           placeholder="Raumcode..." oninput="this.value=this.value.toUpperCase()" />
         <button class="join-btn" onclick="joinRoom()">🖖 VERBINDEN</button>
-        <div style="margin-top:9px;text-align:center;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--subtext)" id="joinError"></div>
+        <div id="joinError" style="margin-top:9px;text-align:center;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--subtext)"></div>
       </div>
     </div>
     <button class="back-btn" onclick="goHome()">← Zurück zum Menü</button>
@@ -757,7 +807,7 @@ const AE = (() => {
 ═══════════════════════════════════════════ */
 const Settings = (() => {
   const KEY = 'rpsls_settings_v2';
-  let cfg = { theme:'dark', iconStyle:'hands', volBg:30, volSfx:65, muteBg:false, muteSfx:false };
+  let cfg = { theme:'dark', iconStyle:'hands', volBg:30, volSfx:65, muteBg:false, muteSfx:false, playerName:'' };
 
   const ICON_SETS = {
     hands:   { rock:'✊', paper:'🖐️', scissors:'✌️', lizard:'🦎', spock:'🖖' },
@@ -776,6 +826,8 @@ const Settings = (() => {
     applyTheme(cfg.theme);
     applyIconStyle(cfg.iconStyle);
     AE.setBgVol(cfg.volBg);
+    const _ni = document.getElementById('playerNameInput');
+    if(_ni) _ni.value = cfg.playerName || '';
     AE.setSfxVol(cfg.volSfx);
     if(cfg.muteBg)  AE.toggleMuteBg();
     if(cfg.muteSfx) AE.toggleMuteSfx();
@@ -823,6 +875,8 @@ const Settings = (() => {
   function closePanel() { document.getElementById('settingsPanel').classList.remove('open'); document.getElementById('settingsOverlay').classList.remove('open'); save(); }
 
   function syncUI() {
+    const niEl = document.getElementById('playerNameInput');
+    if(niEl && niEl.value !== cfg.playerName) niEl.value = cfg.playerName || '';
     const vbEl = document.getElementById('volBg'),  vsEl = document.getElementById('volSfx');
     if(vbEl) vbEl.value = AE.getVolBg();
     if(vsEl) vsEl.value = AE.getVolSfx();
@@ -847,6 +901,8 @@ const Settings = (() => {
     onVolSfx: (v) => { AE.setSfxVol(v); save(); },
     toggleMuteBg:  () => { const m=AE.toggleMuteBg();  updateMuteBtn('muteBgBtn',m);  save(); },
     toggleMuteSfx: () => { const m=AE.toggleMuteSfx(); updateMuteBtn('muteSfxBtn',m); save(); },
+    setPlayerName: (n) => { cfg.playerName = (n||'').trim().substring(0,20); save(); },
+    getPlayerName: () => cfg.playerName || '',
   };
 })();
 
@@ -873,7 +929,9 @@ const STR={
   opp_connected:"Gegner verbunden",sheldon_name:"🤖 SHELDON",human_opp:"👾 GEGNER",
   you_name:"⚛️ DU",sheldon_choice:"Sheldon wählt",opp_choice:"Gegner wählt",
   connecting:"Verbindung zum Server wird hergestellt...",server_ready:"Bereit — teile den Code mit deinem Gegner",online_room:"ONLINE · Raum",
-  countdown_auto:"Zeit abgelaufen — zufälliger Zug gespielt!"
+  countdown_auto:"Zeit abgelaufen — zufälliger Zug gespielt!",
+  room_full:"⛔ Raum voll — es sind bereits 2 Spieler verbunden!",
+  refresh_code:"↺ Neuer Code"
 };
 
 const COUNTDOWN_SECS=5;
@@ -938,6 +996,7 @@ function stopCountdown(){
 /* ── SOLO MODE ── */
 function startSolo(){
   mode="solo";resetGameState();
+  document.getElementById("p1Name").textContent = Settings.getPlayerName() || STR.you_name;
   document.getElementById("p2Name").textContent=STR.sheldon_name;
   document.getElementById("p2Card").className="score-card cpu-card";
   document.getElementById("p2ArenaLabel").textContent=STR.sheldon_choice;
@@ -948,7 +1007,17 @@ function startSolo(){
 }
 
 /* ── LOBBY / PEER ── */
-function showLobby(){showScreen("screenLobby");initPeer();}
+function showLobby(){
+  showScreen("screenLobby");
+  const li=document.getElementById("lobbyNameInput");
+  if(li) li.value=Settings.getPlayerName();
+  initPeer();
+}
+function syncLobbyName(){
+  // Keep settings panel name input in sync with lobby input
+  const si=document.getElementById("playerNameInput");
+  if(si) si.value=Settings.getPlayerName();
+}
 function switchTab(tab){["create","join"].forEach(t=>{document.getElementById("tab"+t.charAt(0).toUpperCase()+t.slice(1)).classList.toggle("active",t===tab);document.getElementById("panel"+t.charAt(0).toUpperCase()+t.slice(1)).style.display=t===tab?"block":"none";});}
 function setLobbyStatus(s,tx){document.getElementById("lobbyStatusDot").className="status-dot "+s;document.getElementById("lobbyStatusText").textContent=tx;}
 function genCode(){const c="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";return Array.from({length:6},()=>c[Math.floor(Math.random()*c.length)]).join("");}
@@ -960,7 +1029,17 @@ function initPeer(){
   document.getElementById("myRoomCode").textContent=code;
   peer=new Peer(code,{host:"0.peerjs.com",port:443,path:"/",secure:true,debug:0});
   peer.on("open",()=>setLobbyStatus("connected",STR.server_ready));
-  peer.on("connection",c=>{conn=c;isHost=true;setupConn();});
+  peer.on("connection",newConn=>{
+    if(conn&&conn.open){
+      // Room already full — reject politely
+      newConn.on("open",()=>{
+        newConn.send({type:"full"});
+        setTimeout(()=>{try{newConn.close();}catch(e){}},400);
+      });
+      return;
+    }
+    conn=newConn;isHost=true;setupConn();
+  });
   peer.on("error",err=>{if(err.type==="unavailable-id"){setTimeout(initPeer,600);return;}setLobbyStatus("error",STR.net_error);});
 }
 function joinRoom(){
@@ -971,22 +1050,48 @@ function joinRoom(){
   if(!peer||peer.destroyed){peer=new Peer(undefined,{host:"0.peerjs.com",port:443,path:"/",secure:true,debug:0});peer.on("open",doJoin);peer.on("error",err=>{document.getElementById("joinError").textContent="⚠️ "+(err.message||err.type);});}
   else{doJoin();}
 }
+function enterOnlineGame(){
+  mode="online";resetGameState();
+  const myName=Settings.getPlayerName()||STR.you_name;
+  document.getElementById("p1Name").textContent=myName;
+  document.getElementById("p2Name").textContent=STR.human_opp;
+  document.getElementById("p2Card").className="score-card online-p2";
+  document.getElementById("p2ArenaLabel").textContent=STR.opp_choice;
+  document.getElementById("cpuDisplay").className="arena-choice p2-aura";
+  document.getElementById("onlineStrip").classList.add("show");
+  document.getElementById("stripCode").textContent=roomCode;
+  document.getElementById("stripOpponent").textContent="🟢 "+STR.opp_connected;
+  document.getElementById("disconnectBtn").style.display="block";
+  showScreen("screenGame");
+  AE.connected();
+  showToast(STR.toast_connected);
+  conn.send({type:"hello",name:myName});
+}
 function setupConn(){
+  let guestReady=false; // guest doesn't enter game until first message received
   conn.on("open",()=>{
-    mode="online";resetGameState();
-    document.getElementById("p2Name").textContent=STR.human_opp;
-    document.getElementById("p2Card").className="score-card online-p2";
-    document.getElementById("p2ArenaLabel").textContent=STR.opp_choice;
-    document.getElementById("cpuDisplay").className="arena-choice p2-aura";
-    document.getElementById("onlineStrip").classList.add("show");
-    document.getElementById("stripCode").textContent=roomCode;
-    document.getElementById("stripOpponent").textContent="🟢 "+STR.opp_connected;
-    document.getElementById("disconnectBtn").style.display="block";
-    showScreen("screenGame");
-    AE.connected();
-    showToast(STR.toast_connected);
+    if(isHost){
+      enterOnlineGame(); // host enters immediately
+    }
+    // guest waits for first message (either "full" rejection or "hello")
   });
-  conn.on("data",handleMsg);
+  conn.on("data",data=>{
+    if(!guestReady&&!isHost){
+      if(data.type==="full"){
+        // Room was full — show error and stay on lobby
+        const errEl=document.getElementById("joinError");
+        if(errEl){errEl.textContent=STR.room_full;errEl.className="join-error-full";}
+        showToast(STR.room_full,5000);
+        try{conn.close();}catch(e){}
+        conn=null;
+        return;
+      }
+      // First valid message → enter game
+      guestReady=true;
+      enterOnlineGame();
+    }
+    handleMsg(data);
+  });
   conn.on("close",()=>{
     if(mode!=="online")return;
     stopCountdown();stopThinking();
@@ -997,12 +1102,27 @@ function setupConn(){
   conn.on("error",err=>console.warn("conn:",err));
 }
 function handleMsg(data){
-  if(data.type==="choice"){
+  if(data.type==="hello"){
+    const oppName = (data.name||'').trim().substring(0,20) || STR.human_opp;
+    document.getElementById("p2Name").textContent = oppName;
+    document.getElementById("stripOpponent").textContent = "🟢 " + oppName;
+    // Reply with our name if they connected after us (guest sends hello, host replies)
+    if(conn && conn.open){
+      const myName = Settings.getPlayerName() || STR.you_name;
+      conn.send({type:"hello", name:myName});
+    }
+  }else if(data.type==="choice"){
     opponentChoice=data.choice;
     if(myChoice){revealOnline();}else{startCountdown();}
   }else if(data.type==="reset"){resetGameState();showToast(STR.toast_reset);}
 }
 function copyCode(){navigator.clipboard.writeText(document.getElementById("myRoomCode").textContent).then(()=>showToast(STR.toast_copied));}
+function refreshCode(){
+  if(conn&&conn.open) return; // don't refresh if already connected
+  try{if(peer&&!peer.destroyed)peer.destroy();}catch(e){}
+  peer=null; conn=null;
+  initPeer();
+}
 
 /* ── THINKING TICKER ── */
 function startThinking(){
