@@ -7,10 +7,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0a0a14;--surface:#111122;--accent:#00d4ff;--accent2:#ff6b35;--gold:#ffd700;--purple:#9b59b6;--text:#e8e8ff;--subtext:#7788aa;--border:rgba(0,212,255,.2);}
+[data-theme="light"]{--bg:#f0f4ff;--surface:#fff;--accent:#0066cc;--accent2:#cc4400;--gold:#996600;--purple:#6600aa;--text:#111133;--subtext:#445577;--border:rgba(0,80,200,.18);}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden;background-image:radial-gradient(ellipse at 20% 20%,rgba(0,212,255,.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(155,89,182,.1) 0%,transparent 50%);}
+body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden;transition:background .4s;
+  background-image:radial-gradient(ellipse at 20% 20%,rgba(0,212,255,.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(155,89,182,.1) 0%,transparent 50%);}
 .stars{position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle,#fff 1px,transparent 1px) 10px 20px/200px 200px,radial-gradient(circle,rgba(255,255,255,.6) 1px,transparent 1px) 80px 90px/300px 300px,radial-gradient(circle,rgba(0,212,255,.4) 1px,transparent 1px) 50px 150px/250px 250px;animation:twinkle 8s ease-in-out infinite alternate;}
 @keyframes twinkle{0%{opacity:.5}100%{opacity:1}}
+[data-theme="light"] .stars{opacity:.06;}
 .wrap{position:relative;z-index:1;width:100%;max-width:700px;padding:32px 16px;text-align:center;}
 .logo-top{font-family:"Share Tech Mono",monospace;font-size:11px;color:var(--accent);letter-spacing:4px;text-transform:uppercase;margin-bottom:10px;opacity:.7;}
 .logo-title{font-family:"Orbitron",sans-serif;font-size:clamp(24px,6vw,52px);font-weight:900;letter-spacing:2px;line-height:1.1;background:linear-gradient(135deg,var(--accent),var(--purple),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 24px rgba(0,212,255,.5));margin-bottom:8px;}
@@ -19,20 +22,18 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
 .lang-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px;}
 .lang-btn{display:flex;flex-direction:column;align-items:center;gap:9px;padding:20px 10px;background:var(--surface);border:1.5px solid var(--border);border-radius:16px;cursor:pointer;transition:all .25s;text-decoration:none;color:var(--text);user-select:none;}
 .lang-btn:hover{transform:translateY(-5px) scale(1.04);border-color:var(--accent);box-shadow:0 14px 40px rgba(0,212,255,.18);}
-.lang-btn.klingon-btn:hover{border-color:#ff6b35;box-shadow:0 14px 40px rgba(255,107,53,.2);}
+.lang-btn.klingon-btn:hover{border-color:var(--accent2);box-shadow:0 14px 40px rgba(255,107,53,.2);}
 .lang-btn:active{transform:scale(.97);}
 .lang-flag{font-size:clamp(28px,6vw,40px);line-height:1;}
 .lang-name{font-family:"Orbitron",sans-serif;font-size:clamp(9px,1.8vw,12px);font-weight:700;color:var(--accent);letter-spacing:1px;}
 .lang-btn.klingon-btn .lang-name{color:var(--accent2);}
 .lang-code{font-family:"Share Tech Mono",monospace;font-size:9px;color:var(--subtext);letter-spacing:2px;}
-.lang-btn.suggested{border-color:var(--gold);box-shadow:0 0 20px rgba(255,215,0,.15);}
-.lang-btn.suggested .lang-name{color:var(--gold);}
+.lang-btn.suggested{border-color:var(--gold);}.lang-btn.suggested .lang-name{color:var(--gold);}
 .suggest-badge{font-family:"Share Tech Mono",monospace;font-size:8px;color:var(--gold);background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.3);border-radius:10px;padding:2px 7px;}
 .klingon-badge{font-family:"Share Tech Mono",monospace;font-size:8px;color:var(--accent2);background:rgba(255,107,53,.1);border:1px solid rgba(255,107,53,.3);border-radius:10px;padding:2px 7px;}
 .footer{font-family:"Share Tech Mono",monospace;font-size:9px;color:#334;letter-spacing:2px;}
 .footer span{color:var(--accent);}
 @media(max-width:480px){.lang-grid{grid-template-columns:repeat(2,1fr);}}
-@media(max-width:340px){.lang-grid{grid-template-columns:repeat(2,1fr);}}
 </style>
 </head>
 <body>
@@ -53,10 +54,10 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
   <div class="footer">Made with 💙 for fans of <span>The Big Bang Theory</span> · BAZINGA!</div>
 </div>
 <script>
-const bLang=(navigator.language||navigator.userLanguage||"en").toLowerCase().split("-")[0];
-const map={it:"btn_it",en:"btn_en",fr:"btn_fr",es:"btn_es",de:"btn_de"};
-const match=map[bLang];
-if(match){const el=document.getElementById(match);el.classList.add("suggested");el.innerHTML+='<span class="suggest-badge">✦ Suggested</span>';}
+(function(){try{const s=localStorage.getItem('rpsls_settings_v2');if(s){const c=JSON.parse(s);if(c.theme)document.documentElement.setAttribute('data-theme',c.theme);}}catch(e){}}());
+const bLang=(navigator.language||'en').toLowerCase().split('-')[0];
+const map={it:'btn_it',en:'btn_en',fr:'btn_fr',es:'btn_es',de:'btn_de'};
+const m=map[bLang];if(m){const el=document.getElementById(m);el.classList.add('suggested');el.innerHTML+='<span class="suggest-badge">✦ Suggested</span>';}
 </script>
 </body>
 </html>
