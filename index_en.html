@@ -394,6 +394,87 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
 .join-error-full{color:var(--red)!important;font-size:11px!important;font-weight:700;
   background:rgba(255,34,68,.08);border:1px solid rgba(255,34,68,.3);
   border-radius:7px;padding:8px 12px;margin-top:8px;text-align:center;}
+/* ── MATCH TARGET BUTTONS ── */
+.match-target-row{display:flex;gap:8px;}
+.match-target-btn{flex:1;padding:10px 6px;background:var(--surface2);
+  border:1.5px solid var(--border);border-radius:8px;
+  color:var(--subtext);font-family:"Orbitron",sans-serif;font-size:13px;
+  font-weight:900;letter-spacing:1px;cursor:pointer;transition:all .2s;text-align:center;}
+.match-target-btn:hover{border-color:var(--gold);color:var(--gold);}
+.match-target-btn.active{background:rgba(255,215,0,.12);border-color:var(--gold);color:var(--gold);}
+.settings-first-to{font-family:"Share Tech Mono",monospace;font-size:10px;
+  color:var(--subtext);letter-spacing:2px;margin-bottom:8px;text-transform:uppercase;}
+
+/* ── MATCH END OVERLAY ── */
+.match-end-overlay{
+  position:fixed;inset:0;z-index:110;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(5,5,18,.92);backdrop-filter:blur(8px);
+  opacity:0;pointer-events:none;transition:opacity .4s;
+}
+.match-end-overlay.show{opacity:1;pointer-events:all;}
+.match-end-box{
+  position:relative;text-align:center;
+  padding:40px 32px 32px;max-width:380px;width:90%;
+  background:var(--surface);border-radius:24px;
+  border:2px solid var(--border);
+  transform:scale(.85) translateY(30px);
+  transition:transform .45s cubic-bezier(.175,.885,.32,1.275);
+  overflow:hidden;
+}
+.match-end-overlay.show .match-end-box{transform:scale(1) translateY(0);}
+.match-end-box::before{
+  content:"";position:absolute;inset:0;border-radius:22px;
+  background:radial-gradient(ellipse at 50% 0%,rgba(0,212,255,.08),transparent 60%);
+  pointer-events:none;
+}
+.match-end-box.win-box{border-color:rgba(57,255,20,.4);}
+.match-end-box.win-box::before{background:radial-gradient(ellipse at 50% 0%,rgba(57,255,20,.1),transparent 60%);}
+.match-end-box.lose-box{border-color:rgba(255,34,68,.4);}
+.match-end-box.lose-box::before{background:radial-gradient(ellipse at 50% 0%,rgba(255,34,68,.08),transparent 60%);}
+.match-end-icon{font-size:72px;line-height:1;margin-bottom:12px;
+  animation:icon-bounce .6s cubic-bezier(.175,.885,.32,1.275) .3s both;}
+@keyframes icon-bounce{0%{transform:scale(0) rotate(-20deg)}100%{transform:scale(1) rotate(0)}}
+.match-end-title{
+  font-family:"Orbitron",sans-serif;font-size:clamp(22px,6vw,32px);
+  font-weight:900;letter-spacing:2px;margin-bottom:14px;line-height:1.1;
+}
+.win-box .match-end-title{color:var(--green);text-shadow:0 0 24px rgba(57,255,20,.5);}
+.lose-box .match-end-title{color:var(--red);}
+.match-end-score-label{
+  font-family:"Share Tech Mono",monospace;font-size:10px;
+  letter-spacing:3px;color:var(--subtext);text-transform:uppercase;margin-bottom:6px;
+}
+.match-end-score{
+  font-family:"Orbitron",sans-serif;font-size:clamp(36px,10vw,52px);
+  font-weight:900;line-height:1;margin-bottom:6px;
+}
+.win-box .match-end-score{color:var(--green);}
+.lose-box .match-end-score{color:var(--red);}
+.match-end-vs-label{
+  font-family:"Share Tech Mono",monospace;font-size:11px;
+  color:var(--subtext);margin-bottom:24px;
+}
+.match-end-stars{
+  position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:22px;
+}
+.match-end-btn-row{display:flex;gap:10px;flex-direction:column;}
+.match-end-new-btn{
+  width:100%;padding:14px;border-radius:12px;cursor:pointer;
+  font-family:"Orbitron",sans-serif;font-size:13px;font-weight:900;
+  letter-spacing:2px;border:none;transition:all .25s;text-transform:uppercase;
+  background:linear-gradient(135deg,var(--accent),var(--purple));
+  color:white;box-shadow:0 4px 20px rgba(0,212,255,.3);
+}
+.match-end-new-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,212,255,.45);}
+.match-end-menu-btn{
+  width:100%;padding:11px;border-radius:10px;cursor:pointer;
+  font-family:"Share Tech Mono",monospace;font-size:11px;letter-spacing:2px;
+  background:transparent;border:1.5px solid var(--border);
+  color:var(--subtext);transition:all .2s;text-transform:uppercase;
+}
+.match-end-menu-btn:hover{color:var(--text);border-color:var(--subtext);}
+
 @media(max-width:400px){
   .choices-grid{gap:6px;}.choice-btn{width:clamp(56px,16vw,72px);padding:10px 6px 8px;}
   .arena{padding:14px 8px;min-height:130px;}.scoreboard{gap:7px;}
@@ -408,6 +489,19 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
 <body>
 <div class="stars"></div>
 <div class="bazinga-overlay" id="bazingaOverlay"><div class="bazinga-text">BAZINGA!</div></div>
+<div class="match-end-overlay" id="matchEndOverlay">
+  <div class="match-end-box" id="matchEndBox">
+    <div class="match-end-icon" id="matchEndIcon">🏆</div>
+    <div class="match-end-title" id="matchEndTitle">🏆 VICTORY!</div>
+    <div class="match-end-score-label">Final score</div>
+    <div class="match-end-score" id="matchEndScore">0 — 0</div>
+    <div class="match-end-vs-label" id="matchEndVs"></div>
+    <div class="match-end-btn-row">
+      <button class="match-end-new-btn" onclick="startNewMatch()">↺ New game</button>
+      <button class="match-end-menu-btn" onclick="matchEndGoHome()">← Menu</button>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <!-- SETTINGS PANEL -->
@@ -425,6 +519,17 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
         maxlength="20" autocomplete="off" autocorrect="off" spellcheck="false"
         placeholder="Player"
         oninput="Settings.setPlayerName(this.value)" />
+    </div>
+    <div class="settings-divider"></div>
+    <!-- Match target -->
+    <div class="settings-section">
+      <div class="settings-section-title">🏆 Match</div>
+      <div class="settings-first-to">First to:</div>
+      <div class="match-target-row">
+        <button class="match-target-btn active" data-val="3" onclick="Settings.setMatchTarget(3)">3</button>
+        <button class="match-target-btn" data-val="5" onclick="Settings.setMatchTarget(5)">5</button>
+        <button class="match-target-btn" data-val="10" onclick="Settings.setMatchTarget(10)">10</button>
+      </div>
     </div>
     <div class="settings-divider"></div>
     <!-- Audio -->
@@ -470,6 +575,12 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
           <span class="iconset-label">Chips</span>
         </button>
       </div>
+    </div>
+    <!-- Version -->
+    <div style="padding:12px 16px 16px;text-align:center;border-top:1px solid var(--border);margin-top:4px;">
+      <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--subtext);letter-spacing:2px;">
+        RPSLS BAZINGA · v1.4.0
+      </span>
     </div>
   </div>
 </div>
@@ -782,10 +893,32 @@ const AE = (() => {
     connected() {
       if (!init() || muteSfx) return;
       if (ctx.state==='suspended') ctx.resume();
-      // Positive "online" chime
       [[C5,.1,.4],[G5,.2,.5]].forEach(([f,d,a],i)=>{
         osc(f,'sine', ctx.currentTime + i*0.12, d+0.1, a, sfxGain);
       });
+    },
+    matchWin() {
+      if (!init() || muteSfx) return;
+      if (ctx.state==='suspended') ctx.resume();
+      // Epic ascending fanfare — 6 notes + final chord
+      const seq = [[C5,.12,.5],[E5,.12,.55],[G5,.12,.6],[C5*2,.18,.65],[E5*2,.18,.6],[G5*2,.35,.7]];
+      seq.forEach(([f,d,a],i) => osc(f,'triangle', ctx.currentTime+i*0.13, d+0.08, a, sfxGain));
+      // Final chord: C major triad
+      const t2 = ctx.currentTime + seq.length*0.13 + 0.05;
+      [[C5,.6,.35],[E5,.6,.3],[G5,.6,.25]].forEach(([f,d,a])=>osc(f,'sine',t2,d,a,sfxGain));
+      // Add sparkle overtone
+      osc(C5*4, 'sine', t2, 0.4, 0.12, sfxGain);
+    },
+    matchLose() {
+      if (!init() || muteSfx) return;
+      if (ctx.state==='suspended') ctx.resume();
+      // Dramatic descending minor — slow, heavy
+      const seq = [[G4,.25,.45],[E4,.25,.42],[D4,.25,.40],[A3,.5,.45]];
+      seq.forEach(([f,d,a],i) => osc(f,'sawtooth', ctx.currentTime+i*0.28, d, a*0.55, sfxGain));
+      // Low boom
+      osc(A3*0.5, 'sine', ctx.currentTime+0.1, 0.8, 0.35, sfxGain);
+      // Dissonant overtone
+      osc(440*0.94, 'sine', ctx.currentTime+0.3, 0.6, 0.15, sfxGain);
     },
 
     // Volume / mute controls
@@ -807,7 +940,7 @@ const AE = (() => {
 ═══════════════════════════════════════════ */
 const Settings = (() => {
   const KEY = 'rpsls_settings_v2';
-  let cfg = { theme:'dark', iconStyle:'hands', volBg:30, volSfx:65, muteBg:false, muteSfx:false, playerName:'' };
+  let cfg = { theme:'dark', iconStyle:'hands', volBg:30, volSfx:65, muteBg:false, muteSfx:false, playerName:'', matchTarget:3 };
 
   const ICON_SETS = {
     hands:   { rock:'✊', paper:'🖐️', scissors:'✌️', lizard:'🦎', spock:'🖖' },
@@ -877,6 +1010,7 @@ const Settings = (() => {
   function syncUI() {
     const niEl = document.getElementById('playerNameInput');
     if(niEl && niEl.value !== cfg.playerName) niEl.value = cfg.playerName || '';
+    document.querySelectorAll('.match-target-btn').forEach(b=>b.classList.toggle('active',+b.dataset.val===(cfg.matchTarget||3)));
     const vbEl = document.getElementById('volBg'),  vsEl = document.getElementById('volSfx');
     if(vbEl) vbEl.value = AE.getVolBg();
     if(vsEl) vsEl.value = AE.getVolSfx();
@@ -903,6 +1037,8 @@ const Settings = (() => {
     toggleMuteSfx: () => { const m=AE.toggleMuteSfx(); updateMuteBtn('muteSfxBtn',m); save(); },
     setPlayerName: (n) => { cfg.playerName = (n||'').trim().substring(0,20); save(); },
     getPlayerName: () => cfg.playerName || '',
+    setMatchTarget: (n) => { cfg.matchTarget=n; document.querySelectorAll('.match-target-btn').forEach(b=>b.classList.toggle('active',+b.dataset.val===n)); save(); },
+    getMatchTarget: () => cfg.matchTarget || 3,
   };
 })();
 
@@ -931,11 +1067,16 @@ const STR={
   connecting:"Connecting to server...",server_ready:"Ready — share the code with your opponent",online_room:"ONLINE · Room",
   countdown_auto:"Timeout — random move played!",
   room_full:"⛔ Room full — 2 players already connected!",
-  refresh_code:"↺ New code"
+  refresh_code:"↺ New code",
+  match_victory:"🏆 VICTORY!",
+  match_defeat:"💀 DEFEAT!",
+  match_final_score:"Final score",
+  new_game_btn:"↺ New game"
 };
 
 const COUNTDOWN_SECS=5;
 let mode="solo",playerScore=0,cpuScore=0,round=1,busy=false;
+let matchOver=false;
 let peer=null,conn=null,isHost=false,myChoice=null,opponentChoice=null,roomCode=null;
 let countdownTimer=null,countdownLeft=0;
 let thinkingInterval=null;
@@ -1114,6 +1255,7 @@ function handleMsg(data){
   }else if(data.type==="choice"){
     opponentChoice=data.choice;
     if(myChoice){revealOnline();}else{startCountdown();}
+  }else if(data.type==="match_end"){if(!matchOver){matchOver=true;const myWon=(data.winner==="p2");setTimeout(()=>showMatchEnd(myWon),900);if(myWon)AE.matchWin();else AE.matchLose();}
   }else if(data.type==="reset"){resetGameState();showToast(STR.toast_reset);}
 }
 function copyCode(){navigator.clipboard.writeText(document.getElementById("myRoomCode").textContent).then(()=>showToast(STR.toast_copied));}
@@ -1138,7 +1280,7 @@ function stopThinking(){
 /* ── GAME STATE ── */
 function resetGameState(){
   stopCountdown();stopThinking();
-  playerScore=0;cpuScore=0;round=1;busy=false;myChoice=null;opponentChoice=null;
+  playerScore=0;cpuScore=0;round=1;busy=false;matchOver=false;myChoice=null;opponentChoice=null;
   ["playerScore","cpuScore"].forEach(id=>document.getElementById(id).textContent="0");
   document.getElementById("roundNum").textContent="1";
   const _pd=document.getElementById("playerDisplay");_pd.textContent="❓";_pd.dataset.choice="";
@@ -1154,6 +1296,7 @@ function resetGameState(){
 /* ── PLAY ── */
 function play(ch){
   userInteract();
+  if(matchOver)return;
   if(mode==="solo"){if(busy)return;playSolo(ch);}
   else{if(busy&&!countdownTimer)return;playOnline(ch);}
 }
@@ -1219,6 +1362,16 @@ function showResult(p,cpu,isAI){
   document.getElementById("playerScore").textContent=playerScore;
   document.getElementById("cpuScore").textContent=cpuScore;
   document.getElementById("roundNum").textContent=++round;
+  // Check match end
+  const mt=Settings.getMatchTarget();
+  if(!matchOver && (playerScore>=mt || cpuScore>=mt)){
+    matchOver=true;
+    const playerWon=(playerScore>=mt);
+    setTimeout(()=>showMatchEnd(playerWon), 900);
+    if(playerWon) AE.matchWin(); else AE.matchLose();
+    // Online: notify opponent
+    if(mode==="online"&&conn&&conn.open) conn.send({type:"match_end",winner:playerWon?"p1":"p2"});
+  }
   const b=document.getElementById("resultBanner");
   b.className="result-banner show "+outcome;
   b.innerHTML="<div><div>"+mainText+"</div><span class='result-rule'>"+ruleText+"</span>"+(quote?"<span class='result-rule' style='color:#556;margin-top:3px;display:block;font-style:italic'>&#8220;"+quote+"&#8221;</span>":"")+"</div>";
@@ -1227,8 +1380,33 @@ function anim(id){const el=document.getElementById(id);el.classList.remove("pop-
 function triggerBazinga(){const o=document.getElementById("bazingaOverlay");o.className="bazinga-overlay";void o.offsetWidth;o.className="bazinga-overlay show";setTimeout(()=>o.className="bazinga-overlay",1800);}
 function toggleRules(){const p=document.getElementById("rulesPanel");p.classList.toggle("open");document.getElementById("rulesArrow").textContent=p.classList.contains("open")?"▲":"▼";}
 function resetGame(){resetGameState();if(mode==="online"&&conn&&conn.open)conn.send({type:"reset"});}
+function showMatchEnd(playerWon){
+  const overlay=document.getElementById("matchEndOverlay");
+  const box=document.getElementById("matchEndBox");
+  document.getElementById("matchEndIcon").textContent  = playerWon ? "🏆" : "💀";
+  document.getElementById("matchEndTitle").textContent = playerWon ? STR.match_victory : STR.match_defeat;
+  document.getElementById("matchEndScore").textContent = playerScore+" — "+cpuScore;
+  const opp = mode==="online"
+    ? document.getElementById("p2Name").textContent
+    : document.getElementById("p2Name").textContent;
+  document.getElementById("matchEndVs").textContent = "vs "+opp;
+  box.className = "match-end-box " + (playerWon ? "win-box" : "lose-box");
+  overlay.classList.add("show");
+  if(playerWon) triggerBazinga();
+}
+function startNewMatch(){
+  document.getElementById("matchEndOverlay").classList.remove("show");
+  resetGameState();
+  // Notify opponent too
+  if(mode==="online"&&conn&&conn.open) conn.send({type:"reset"});
+}
+function matchEndGoHome(){
+  document.getElementById("matchEndOverlay").classList.remove("show");
+  goHome();
+}
 function goHome(){
   stopCountdown();stopThinking();Settings.save();
+  document.getElementById("matchEndOverlay").classList.remove("show");
   if(conn){try{conn.close();}catch(e){}conn=null;}
   if(peer&&!peer.destroyed){try{peer.destroy();}catch(e){}peer=null;}
   mode="solo";myChoice=null;opponentChoice=null;showScreen("screenMenu");
@@ -1238,6 +1416,39 @@ function goHome(){
 (function(){
   try{const s=localStorage.getItem('rpsls_settings_v2');if(s){const c=JSON.parse(s);if(c.theme)document.documentElement.setAttribute('data-theme',c.theme);}}catch(e){}
 })();
+
+/* ── ANDROID BACK HANDLER ── */
+function androidBack(){
+  // 0. Match end overlay open → treat as new match / menu
+  const meo=document.getElementById("matchEndOverlay");
+  if(meo&&meo.classList.contains("show")){
+    meo.classList.remove("show");
+    if(window.AndroidBridge) AndroidBridge.backHandled();
+    return;
+  }
+  // 1. Settings panel open → close it
+  const panel=document.getElementById("settingsPanel");
+  if(panel&&panel.classList.contains("open")){
+    Settings.closePanel();
+    if(window.AndroidBridge) AndroidBridge.backHandled();
+    return;
+  }
+  // 2. Game screen active → go back to menu
+  const gameScreen=document.getElementById("screenGame");
+  if(gameScreen&&gameScreen.classList.contains("active")){
+    goHome();
+    if(window.AndroidBridge) AndroidBridge.backHandled();
+    return;
+  }
+  // 3. Lobby screen active → go back to menu
+  const lobbyScreen=document.getElementById("screenLobby");
+  if(lobbyScreen&&lobbyScreen.classList.contains("active")){
+    goHome();
+    if(window.AndroidBridge) AndroidBridge.backHandled();
+    return;
+  }
+  // 4. Menu screen → let Android handle (will exit or go to lang picker)
+}
 </script>
 </body>
 </html>
