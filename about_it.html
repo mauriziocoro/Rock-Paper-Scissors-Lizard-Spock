@@ -534,6 +534,26 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
   background:linear-gradient(135deg,#00b0f0,#0040a0);}
 .donation-btn:active{transform:scale(.97);}
 .donation-btn-logo{font-size:18px;line-height:1;}
+.contact-section{background:var(--surface);border:1px solid rgba(0,212,255,.2);
+  border-radius:16px;padding:22px;margin-bottom:20px;position:relative;overflow:hidden;}
+.contact-section::before{content:"";position:absolute;top:0;left:0;width:3px;height:100%;
+  background:linear-gradient(to bottom,var(--accent),var(--purple));}
+.contact-section-title{font-family:"Orbitron",sans-serif;font-size:clamp(13px,3vw,16px);
+  font-weight:900;letter-spacing:1px;margin-bottom:10px;color:var(--text);}
+.contact-body{font-size:clamp(12px,2.5vw,14px);color:var(--subtext);line-height:1.7;margin-bottom:16px;}
+.contact-btn-row{display:flex;gap:10px;flex-wrap:wrap;}
+.contact-btn{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;
+  border-radius:10px;text-decoration:none;font-family:"Orbitron",sans-serif;
+  font-size:12px;font-weight:700;letter-spacing:1px;transition:all .22s;flex:1;
+  justify-content:center;min-width:140px;}
+.contact-btn-suggest{background:rgba(0,212,255,.1);border:1.5px solid rgba(0,212,255,.4);
+  color:var(--accent);}
+.contact-btn-suggest:hover{background:rgba(0,212,255,.2);box-shadow:0 4px 18px rgba(0,212,255,.25);
+  transform:translateY(-2px);}
+.contact-btn-bug{background:rgba(255,107,53,.08);border:1.5px solid rgba(255,107,53,.35);
+  color:var(--accent2);}
+.contact-btn-bug:hover{background:rgba(255,107,53,.18);box-shadow:0 4px 18px rgba(255,107,53,.2);
+  transform:translateY(-2px);}
 .copyright-notice{text-align:center;padding:16px;font-family:"Share Tech Mono",monospace;font-size:10px;color:#445;letter-spacing:1px;line-height:1.7;margin-top:8px;border-top:1px solid var(--border);}
 .copyright-notice span{color:var(--subtext);}
 @media(max-width:480px){.about-section{padding:18px 14px;}.about-section::before{width:2px;}}
@@ -574,6 +594,32 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
       </div>
     </div>
   </div>
+  <div class="donation-section">
+    <div class="donation-section-title">☕ Sostieni il progetto</div>
+    <p class="donation-body">Se questo gioco ti diverte, puoi offrire un caffè all'autore con una piccola donazione via PayPal.</p>
+    <a class="donation-btn"
+       href="https://www.paypal.com/donate/?business=maurizio.coro%40gmail.com&currency_code=EUR&item_name=RPSLS+Bazinga"
+       target="_blank" rel="noopener noreferrer">
+      <span class="donation-btn-logo">&#x1F4B3;</span>
+      ☕ Offrimi un caffè su PayPal
+    </a>
+  </div>
+  <div class="contact-section">
+    <div class="contact-section-title">📬 Contatti & Feedback</div>
+    <p class="contact-body">Hai un suggerimento, hai trovato un bug o vuoi semplicemente dire ciao? Scrivi un messaggio!</p>
+    <div class="contact-btn-row">
+      <a class="contact-btn contact-btn-suggest"
+         href="mailto:maurizio.coro@gmail.com?subject=Suggerimento per RPSLS Bazinga"
+         target="_blank" rel="noopener">
+        ✉️ ✉️ Scrivi un messaggio
+      </a>
+      <a class="contact-btn contact-btn-bug"
+         href="mailto:maurizio.coro@gmail.com?subject=Segnalazione bug — RPSLS Bazinga"
+         target="_blank" rel="noopener">
+        🐛 Bug report
+      </a>
+    </div>
+  </div>
   <div class="about-section privacy-sec">
     <div class="about-section-title">🔒 Privacy & Dati</div>
     <p>Questo gioco è progettato nel pieno rispetto della privacy degli utenti.</p>
@@ -593,16 +639,6 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
   <div class="about-section disclaimer-sec">
     <div class="about-section-title">⚠️ Disclaimer Generale</div>
     <p>Questo software è fornito "così com'è" (<em>as-is</em>), senza garanzie di alcun tipo, esplicite o implicite. L'autore non si assume alcuna responsabilità per eventuali danni derivanti dall'utilizzo di questo gioco.</p>
-  </div>
-  <div class="donation-section">
-    <div class="donation-section-title">☕ Sostieni il progetto</div>
-    <p class="donation-body">Se questo gioco ti diverte, puoi offrire un caffè all'autore con una piccola donazione via PayPal.</p>
-    <a class="donation-btn"
-       href="https://www.paypal.com/donate/?business=maurizio.coro%40gmail.com&currency_code=EUR&item_name=RPSLS+Bazinga"
-       target="_blank" rel="noopener noreferrer">
-      <span class="donation-btn-logo">&#x1F4B3;</span>
-      ☕ Offrimi un caffè su PayPal
-    </a>
   </div>
   <div class="copyright-notice">
     <span>THE BIG BANG THEORY™ © Chuck Lorre Productions, Inc. &amp; Warner Bros. Television.</span><br>
