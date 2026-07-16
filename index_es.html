@@ -6,6 +6,7 @@
 <title>Rock Paper Scissors Lizard Spock — Bazinga! (Español)</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 /* ── THEME VARIABLES ── */
 :root{
@@ -484,10 +485,273 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
   .settings-panel{width:100vw;}
 }
 @media(max-width:340px){.choices-grid{gap:5px;}.choice-btn{width:54px;}.logo-title{font-size:18px;}}
+
+/* ══ TBBT THEME ══════════════════════════════════════════════════════ */
+[data-theme="tbbt"]{
+  --bg:#0a0500;--surface:#170d00;--surface2:#231200;
+  --accent:#ff7b00;--accent2:#ffc107;--green:#39ff14;
+  --red:#ff2244;--gold:#ffde59;--purple:#c77dff;
+  --text:#fff3e0;--subtext:#997755;--border:rgba(255,123,0,.28);
+  --settings-bg:#0a0500;--card-shadow:rgba(255,123,0,.08);
+}
+[data-theme="tbbt"] body{
+  background-image:radial-gradient(ellipse at 20% 20%,rgba(255,123,0,.09) 0%,transparent 50%),
+    radial-gradient(ellipse at 80% 80%,rgba(255,193,7,.07) 0%,transparent 50%);
+}
+[data-theme="tbbt"] .stars{opacity:.35;}
+[data-theme="tbbt"] .logo-title{
+  background:linear-gradient(135deg,#ff7b00,#ffc107,#ff7b00);
+  -webkit-background-clip:text;background-clip:text;
+  filter:drop-shadow(0 0 20px rgba(255,123,0,.5));
+}
+[data-theme="tbbt"] .lang-bar{background:rgba(10,5,0,.9);}
+[data-theme="tbbt"] .lang-select{color:var(--accent);}
+[data-theme="tbbt"] .vs-badge{background:linear-gradient(135deg,#ff7b00,#ffc107);}
+
+/* ══ SCREEN TRANSITIONS ═════════════════════════════════════════════ */
+@keyframes screenFadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes screenFadeOut{from{opacity:1}to{opacity:0}}
+.screen.active{animation:screenFadeIn .22s ease both;}
+
+/* ══ NAV BUTTONS (stats / achievements / tournament) ════════════════ */
+.nav-bar{display:flex;gap:6px;margin-bottom:14px;justify-content:flex-end;}
+.nav-btn{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  color:var(--subtext);font-size:18px;width:36px;height:32px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.nav-btn:hover{color:var(--accent);border-color:var(--accent);}
+.nav-btn.active-nav{background:rgba(0,212,255,.1);border-color:var(--accent);color:var(--accent);}
+
+/* ══ STATS SCREEN ═══════════════════════════════════════════════════ */
+.stats-hero{text-align:center;padding:16px 0 20px;border-bottom:1px solid var(--border);margin-bottom:20px;}
+.stats-elo-label{font-family:"Share Tech Mono",monospace;font-size:11px;letter-spacing:3px;color:var(--subtext);text-transform:uppercase;margin-bottom:6px;}
+.stats-elo-val{font-family:"Orbitron",sans-serif;font-size:clamp(52px,14vw,72px);font-weight:900;line-height:1;
+  background:linear-gradient(135deg,var(--gold),var(--accent2));-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 16px rgba(255,215,0,.4));}
+.stats-elo-trend{font-family:"Share Tech Mono",monospace;font-size:12px;margin-top:4px;}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 10px;text-align:center;}
+.stat-card-val{font-family:"Orbitron",sans-serif;font-size:clamp(22px,6vw,32px);font-weight:900;line-height:1;margin-bottom:4px;}
+.stat-card-lbl{font-family:"Share Tech Mono",monospace;font-size:9px;letter-spacing:2px;color:var(--subtext);text-transform:uppercase;}
+.stat-win .stat-card-val{color:var(--green);}
+.stat-loss .stat-card-val{color:var(--red);}
+.stat-draw .stat-card-val{color:var(--gold);}
+.stats-section-title{font-family:"Orbitron",sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;
+  color:var(--accent);text-transform:uppercase;margin-bottom:10px;}
+.move-bars{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+.move-bar-row{display:flex;align-items:center;gap:8px;}
+.move-bar-emoji{font-size:18px;width:28px;text-align:center;flex-shrink:0;}
+.move-bar-track{flex:1;height:10px;background:var(--surface2);border-radius:5px;overflow:hidden;}
+.move-bar-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--accent),var(--purple));transition:width .6s cubic-bezier(.25,.46,.45,.94);}
+.move-bar-count{font-family:"Share Tech Mono",monospace;font-size:10px;color:var(--subtext);min-width:28px;text-align:right;}
+.stats-extra-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.stats-extra-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;display:flex;align-items:center;gap:10px;}
+.stats-extra-icon{font-size:24px;}
+.stats-extra-val{font-family:"Orbitron",sans-serif;font-size:18px;font-weight:900;color:var(--text);}
+.stats-extra-lbl{font-family:"Share Tech Mono",monospace;font-size:9px;letter-spacing:1px;color:var(--subtext);}
+.stats-reset-btn{display:block;margin:0 auto;padding:9px 24px;background:transparent;
+  border:1px solid rgba(255,34,68,.3);border-radius:8px;color:var(--red);
+  font-family:"Share Tech Mono",monospace;font-size:10px;letter-spacing:2px;cursor:pointer;transition:all .2s;}
+.stats-reset-btn:hover{background:rgba(255,34,68,.1);}
+
+/* ══ ACHIEVEMENTS SCREEN ═══════════════════════════════════════════ */
+.achieve-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:20px;}
+.achieve-card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;
+  padding:14px 10px;text-align:center;transition:all .25s;position:relative;overflow:hidden;}
+.achieve-card.unlocked{border-color:var(--gold);background:rgba(255,215,0,.06);}
+.achieve-card.locked{opacity:.45;filter:grayscale(.8);}
+.achieve-icon{font-size:32px;line-height:1;margin-bottom:6px;}
+.achieve-name{font-family:"Orbitron",sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;
+  color:var(--text);text-transform:uppercase;margin-bottom:4px;line-height:1.3;}
+.achieve-desc{font-family:"Share Tech Mono",monospace;font-size:9px;color:var(--subtext);line-height:1.4;}
+.achieve-card.unlocked .achieve-name{color:var(--gold);}
+.achieve-unlock-toast{
+  position:fixed;bottom:60px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:linear-gradient(135deg,rgba(255,215,0,.2),rgba(255,107,53,.15));
+  border:1.5px solid var(--gold);border-radius:12px;
+  padding:10px 20px;z-index:210;transition:transform .3s;
+  display:flex;align-items:center;gap:10px;pointer-events:none;
+  font-family:"Orbitron",sans-serif;font-size:11px;color:var(--gold);
+  white-space:nowrap;box-shadow:0 4px 20px rgba(255,215,0,.3);
+}
+.achieve-unlock-toast.show{transform:translateX(-50%) translateY(0);}
+.achieve-progress-bar{
+  width:100%;height:3px;background:var(--border);border-radius:2px;margin-top:8px;overflow:hidden;
+}
+.achieve-progress-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .5s;}
+
+/* ══ DIFFICULTY BUTTONS ═════════════════════════════════════════════ */
+.diff-row{display:flex;gap:8px;}
+.diff-btn{flex:1;padding:9px 6px;background:var(--surface2);border:1.5px solid var(--border);
+  border-radius:8px;color:var(--subtext);font-family:"Share Tech Mono",monospace;font-size:9px;
+  letter-spacing:1px;cursor:pointer;transition:all .2s;text-align:center;text-transform:uppercase;}
+.diff-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(0,212,255,.1);}
+.diff-btn.diff-hard.active{border-color:var(--red);color:var(--red);background:rgba(255,34,68,.08);}
+.diff-btn:hover{border-color:var(--accent);color:var(--text);}
+
+/* ══ CHAT PANEL ══════════════════════════════════════════════════════ */
+.chat-panel{
+  display:none;flex-direction:column;gap:0;
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  margin-bottom:14px;overflow:hidden;max-height:220px;
+}
+.chat-panel.open{display:flex;}
+.chat-messages{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:5px;min-height:80px;max-height:130px;}
+.chat-messages::-webkit-scrollbar{width:3px;}
+.chat-messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.chat-msg{display:flex;gap:6px;align-items:flex-start;}
+.chat-msg.mine{flex-direction:row-reverse;}
+.chat-bubble{padding:5px 9px;border-radius:10px;font-family:"Share Tech Mono",monospace;font-size:10px;
+  color:var(--text);max-width:75%;line-height:1.4;}
+.chat-msg.mine .chat-bubble{background:rgba(0,212,255,.15);border:1px solid rgba(0,212,255,.25);}
+.chat-msg.theirs .chat-bubble{background:var(--surface2);border:1px solid var(--border);}
+.chat-who{font-family:"Share Tech Mono",monospace;font-size:8px;color:var(--subtext);letter-spacing:1px;margin-top:3px;}
+.chat-quick{display:flex;gap:4px;padding:6px 8px;border-top:1px solid var(--border);flex-wrap:wrap;}
+.chat-quick-btn{font-size:16px;padding:3px 6px;background:transparent;border:1px solid var(--border);
+  border-radius:6px;cursor:pointer;transition:all .15s;line-height:1;}
+.chat-quick-btn:hover{background:var(--surface2);border-color:var(--accent);}
+.chat-input-row{display:flex;gap:6px;padding:6px 8px;border-top:1px solid var(--border);}
+.chat-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:7px;
+  color:var(--text);font-family:"Share Tech Mono",monospace;font-size:11px;padding:6px 10px;outline:none;}
+.chat-input:focus{border-color:var(--accent);}
+.chat-send-btn{background:var(--accent);border:none;border-radius:7px;color:var(--bg);
+  font-size:14px;width:30px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.chat-send-btn:hover{background:var(--purple);}
+.chat-toggle-btn{background:transparent;border:1px solid var(--border);border-radius:8px;
+  color:var(--subtext);font-size:14px;height:28px;padding:0 8px;cursor:pointer;
+  display:flex;align-items:center;gap:4px;transition:all .2s;font-family:"Share Tech Mono",monospace;font-size:10px;}
+.chat-toggle-btn:hover{color:var(--accent);border-color:var(--accent);}
+.chat-badge{background:var(--red);color:#fff;font-size:9px;border-radius:50%;
+  width:14px;height:14px;display:inline-flex;align-items:center;justify-content:center;margin-left:2px;}
+
+/* ══ QR CODE ═════════════════════════════════════════════════════════ */
+.qr-wrapper{text-align:center;margin-top:10px;}
+.qr-hint{font-family:"Share Tech Mono",monospace;font-size:10px;letter-spacing:2px;
+  color:var(--subtext);margin-top:6px;text-transform:uppercase;}
+.qr-inner{display:inline-block;padding:8px;background:#fff;border-radius:8px;margin-top:6px;}
+.qr-toggle-btn{display:flex;align-items:center;justify-content:center;gap:6px;
+  width:100%;margin-top:8px;padding:7px;background:transparent;border:1px solid var(--border);
+  border-radius:8px;color:var(--subtext);font-family:"Share Tech Mono",monospace;font-size:10px;
+  letter-spacing:2px;cursor:pointer;transition:all .2s;text-transform:uppercase;}
+.qr-toggle-btn:hover{color:var(--purple);border-color:var(--purple);}
+
+/* ══ SHARE BUTTON ════════════════════════════════════════════════════ */
+.match-end-share-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:9px;border-radius:10px;cursor:pointer;margin-top:8px;
+  font-family:"Share Tech Mono",monospace;font-size:10px;letter-spacing:2px;
+  background:transparent;border:1.5px solid var(--border);
+  color:var(--subtext);transition:all .2s;text-transform:uppercase;
+}
+.match-end-share-btn:hover{color:var(--accent);border-color:var(--accent);}
+
+/* ══ REMATCH BUTTON ══════════════════════════════════════════════════ */
+.match-end-rematch-btn{
+  display:none;width:100%;padding:11px;border-radius:10px;cursor:pointer;margin-bottom:8px;
+  font-family:"Orbitron",sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;
+  background:rgba(155,89,182,.15);border:1.5px solid var(--purple);
+  color:var(--purple);transition:all .2s;text-transform:uppercase;text-align:center;
+}
+.match-end-rematch-btn:hover{background:rgba(155,89,182,.28);}
+.match-end-rematch-btn.show{display:block;}
+.match-end-rematch-btn:disabled{opacity:.5;cursor:default;}
+
+/* ══ TUTORIAL OVERLAY ════════════════════════════════════════════════ */
+.tutorial-overlay{
+  position:fixed;inset:0;z-index:120;background:rgba(5,5,18,.95);
+  backdrop-filter:blur(6px);display:none;flex-direction:column;
+  align-items:center;justify-content:center;padding:20px;
+}
+.tutorial-overlay.show{display:flex;}
+.tutorial-box{
+  max-width:380px;width:100%;text-align:center;
+  background:var(--surface);border:1.5px solid var(--border);border-radius:20px;padding:32px 24px;
+}
+.tutorial-step-dots{display:flex;gap:6px;justify-content:center;margin-bottom:20px;}
+.tutorial-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:background .3s;}
+.tutorial-dot.active{background:var(--accent);}
+.tutorial-icon{font-size:56px;margin-bottom:14px;line-height:1;animation:icon-bounce .5s cubic-bezier(.175,.885,.32,1.275) both;}
+.tutorial-title{font-family:"Orbitron",sans-serif;font-size:clamp(16px,4vw,20px);font-weight:900;
+  color:var(--accent);letter-spacing:1px;margin-bottom:10px;}
+.tutorial-text{font-family:"Exo 2",sans-serif;font-size:13px;color:var(--subtext);line-height:1.7;margin-bottom:22px;}
+.tutorial-btn-row{display:flex;gap:10px;}
+.tutorial-skip-btn{flex:0 0 auto;padding:11px 16px;border-radius:10px;cursor:pointer;
+  background:transparent;border:1px solid var(--border);color:var(--subtext);
+  font-family:"Share Tech Mono",monospace;font-size:10px;letter-spacing:2px;transition:all .2s;}
+.tutorial-skip-btn:hover{color:var(--text);border-color:var(--subtext);}
+.tutorial-next-btn{flex:1;padding:12px;border-radius:10px;cursor:pointer;border:none;
+  background:linear-gradient(135deg,var(--accent),var(--purple));
+  color:#fff;font-family:"Orbitron",sans-serif;font-size:12px;font-weight:700;
+  letter-spacing:1px;transition:all .22s;}
+.tutorial-next-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,212,255,.3);}
+
+/* ══ TOURNAMENT SCREEN ═══════════════════════════════════════════════ */
+.bracket{display:flex;flex-direction:column;gap:16px;margin:16px 0;}
+.bracket-round-label{font-family:"Orbitron",sans-serif;font-size:10px;font-weight:700;
+  color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;}
+.bracket-match{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.bracket-player{display:flex;align-items:center;gap:10px;padding:10px 14px;
+  border-bottom:1px solid var(--border);transition:background .2s;}
+.bracket-player:last-child{border-bottom:none;}
+.bracket-player.winner{background:rgba(57,255,20,.08);border-left:3px solid var(--green);}
+.bracket-player.loser{opacity:.45;}
+.bracket-player.playing{animation:pulse-gold 1.2s infinite;}
+.bracket-player-name{font-family:"Orbitron",sans-serif;font-size:12px;font-weight:700;color:var(--text);flex:1;}
+.bracket-player-score{font-family:"Orbitron",sans-serif;font-size:18px;font-weight:900;color:var(--subtext);}
+.bracket-player.winner .bracket-player-score{color:var(--green);}
+.bracket-vs{text-align:center;font-family:"Share Tech Mono",monospace;font-size:9px;
+  letter-spacing:2px;color:var(--subtext);padding:4px;background:var(--surface2);}
+.tourn-start-btn{width:100%;padding:14px;border-radius:12px;cursor:pointer;border:none;
+  background:linear-gradient(135deg,var(--gold),var(--accent2));
+  color:#0a0a14;font-family:"Orbitron",sans-serif;font-size:14px;font-weight:900;
+  letter-spacing:2px;transition:all .25s;text-transform:uppercase;margin-bottom:14px;}
+.tourn-start-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,215,0,.35);}
+.tourn-start-btn:disabled{opacity:.4;cursor:default;transform:none;}
+.tourn-result-banner{text-align:center;padding:14px;border-radius:12px;margin-top:14px;
+  font-family:"Orbitron",sans-serif;font-size:clamp(14px,3vw,20px);font-weight:900;
+  background:rgba(255,215,0,.08);border:1.5px solid rgba(255,215,0,.3);color:var(--gold);
+  display:none;}
+.tourn-result-banner.show{display:block;}
+
+/* ══ DIFFICULTY BADGE IN GAME ════════════════════════════════════════ */
+.diff-badge{display:inline-flex;align-items:center;gap:4px;
+  font-family:"Share Tech Mono",monospace;font-size:9px;letter-spacing:1px;
+  padding:2px 7px;border-radius:10px;margin-top:2px;text-transform:uppercase;}
+.diff-badge.easy{background:rgba(57,255,20,.1);color:var(--green);border:1px solid rgba(57,255,20,.25);}
+.diff-badge.normal{background:rgba(0,212,255,.1);color:var(--accent);border:1px solid rgba(0,212,255,.25);}
+.diff-badge.hard{background:rgba(255,34,68,.1);color:var(--red);border:1px solid rgba(255,34,68,.3);}
+
+@media(max-width:400px){
+  .achieve-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr));}
+  .stats-grid{grid-template-columns:repeat(3,1fr);gap:7px;}
+  .stats-extra-grid{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
 <div class="stars"></div>
+
+<!-- Achievement unlock toast -->
+<div class="achieve-unlock-toast" id="achieveUnlockToast">
+  <span id="achieveUnlockIcon">🏅</span>
+  <div>
+    <div style="font-size:9px;letter-spacing:2px;opacity:.7">🏅 ¡Logro desbloqueado!</div>
+    <div id="achieveUnlockName" style="font-size:12px"></div>
+  </div>
+</div>
+
+<!-- Tutorial overlay -->
+<div class="tutorial-overlay" id="tutorialOverlay">
+  <div class="tutorial-box">
+    <div class="tutorial-step-dots" id="tutDots"></div>
+    <div class="tutorial-icon" id="tutIcon">🖖</div>
+    <div class="tutorial-title" id="tutTitle"></div>
+    <div class="tutorial-text" id="tutText"></div>
+    <div class="tutorial-btn-row">
+      <button class="tutorial-skip-btn" onclick="closeTutorial()">Omitir</button>
+      <button class="tutorial-next-btn" id="tutNextBtn" onclick="tutNext()">Siguiente →</button>
+    </div>
+  </div>
+</div>
 <div class="bazinga-overlay" id="bazingaOverlay"><div class="bazinga-text">BAZINGA!</div></div>
 <div class="match-end-overlay" id="matchEndOverlay">
   <div class="match-end-box" id="matchEndBox">
@@ -497,6 +761,8 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
     <div class="match-end-score" id="matchEndScore">0 — 0</div>
     <div class="match-end-vs-label" id="matchEndVs"></div>
     <div class="match-end-btn-row">
+      <button class="match-end-rematch-btn" id="matchEndRematchBtn" onclick="requestRematch()">🔄 ¿Revancha?</button>
+<button class="match-end-share-btn" onclick="shareResult()">📤 Compartir</button>
       <button class="match-end-new-btn" onclick="startNewMatch()">↺ Nueva partida</button>
       <button class="match-end-menu-btn" onclick="matchEndGoHome()">← Menú</button>
     </div>
@@ -532,6 +798,16 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
       </div>
     </div>
     <div class="settings-divider"></div>
+    <!-- Difficulty -->
+    <div class="settings-section">
+      <div class="settings-section-title">🎯 Dificultad</div>
+      <div class="diff-row">
+        <button class="diff-btn active" data-diff="easy" onclick="Settings.setDifficulty('easy')">Fácil</button>
+        <button class="diff-btn active" data-diff="normal" onclick="Settings.setDifficulty('normal')">Normal</button>
+        <button class="diff-btn diff-hard" data-diff="hard" onclick="Settings.setDifficulty('hard')">Imposible</button>
+      </div>
+    </div>
+    <div class="settings-divider"></div>
     <!-- Audio -->
     <div class="settings-section">
       <div class="settings-section-title">🔊 Audio</div>
@@ -554,7 +830,8 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
       <div class="settings-section-title">🎨 Tema</div>
       <div class="toggle-row">
         <button class="theme-btn active" data-theme="dark" onclick="Settings.setTheme('dark')">🌙 Oscuro</button>
-        <button class="theme-btn" data-theme="light" onclick="Settings.setTheme('light')">☀️ Claro</button>
+        <button class="theme-btn" data-theme="light" onclick="Settings.setTheme('light')">[settings_light]</button>
+        <button class="theme-btn" data-theme="tbbt" onclick="Settings.setTheme('tbbt')">🌟 TBBT>☀️ Claro</button>
       </div>
     </div>
     <div class="settings-divider"></div>
@@ -604,6 +881,11 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
 <!-- SCREEN: MENU -->
 <div class="screen active" id="screenMenu">
   <div class="container">
+    <div class="nav-bar">
+  <button class="nav-btn" onclick="openStats()" title="📊 ESTADÍSTICAS">📊</button>
+  <button class="nav-btn" onclick="openAchievements()" title="🏅 LOGROS">🏅</button>
+  <button class="nav-btn" onclick="openTournament()" title="🏆 TORNEO">🏆</button>
+</div>
     <div class="header">
       <div class="logo-top">📡 Caltech Theoretical Physics Dept.</div>
       <div class="logo-title">ROCK·PAPER·SCISSORS<br>LIZARD·SPOCK</div>
@@ -660,6 +942,12 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
           <div class="room-code-hint">Comparte este código.<br>La partida comienza en cuanto se conecte.</div>
         </div>
         <button class="copy-btn" onclick="copyCode()">📋 Copiar código</button>
+        <!-- QR Code (in lobby create panel) -->
+<div class="qr-wrapper" id="qrWrapper" style="display:none">
+  <div class="qr-inner"><div id="qrCanvas"></div></div>
+  <div class="qr-hint">Escanear para unirse</div>
+</div>
+<button class="qr-toggle-btn" id="qrToggleBtn" onclick="toggleQR()">📷 QR Code</button>
         <button class="refresh-code-btn" id="refreshCodeBtn" onclick="refreshCode()">
           ↺ ↺ Nuevo código
         </button>
@@ -686,6 +974,7 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
         <span>EN LÍNEA · Sala</span>
         <span class="online-code" id="stripCode">------</span>
       </div>
+      <button class="chat-toggle-btn" id="chatToggleBtn" onclick="toggleChat()" style="display:none">💬 💬 <span class="chat-badge" style="display:none">0</span></button>
       <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--subtext)" id="stripOpponent">Adversario conectado</div>
     </div>
     <div class="scoreboard">
@@ -739,6 +1028,17 @@ body{background:var(--bg);color:var(--text);font-family:"Exo 2",sans-serif;min-h
       <div class="countdown-bar-wrap"><div class="countdown-bar" id="countdownBar"></div></div>
     </div>
     <div class="result-banner" id="resultBanner"></div>
+    <!-- Chat panel (online only) -->
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-messages" id="chatMessages"></div>
+  <div class="chat-quick"><button class="chat-quick-btn" onclick="sendQuickChat('👍')">👍</button><button class="chat-quick-btn" onclick="sendQuickChat('😅')">😅</button><button class="chat-quick-btn" onclick="sendQuickChat('🔥')">🔥</button><button class="chat-quick-btn" onclick="sendQuickChat('😤')">😤</button><button class="chat-quick-btn" onclick="sendQuickChat('🎉')">🎉</button><button class="chat-quick-btn" onclick="sendQuickChat('🤝')">🤝</button><button class="chat-quick-btn" onclick="sendQuickChat('💀')">💀</button><button class="chat-quick-btn" onclick="sendQuickChat('🖖')">🖖</button></div>
+  <div class="chat-input-row">
+    <input class="chat-input" id="chatInput" type="text" maxlength="60"
+      placeholder="Mensaje..."
+      onkeydown="if(event.key==='Enter')sendChatMsg()">
+    <button class="chat-send-btn" onclick="sendChatMsg()">↑</button>
+  </div>
+</div>
     <div class="choices-label">— Elige tu movimiento —</div>
     <div class="choices-grid" id="choicesGrid">
       <button class="choice-btn rock"     data-ch="rock"     onclick="play('rock')"    ><div class="choice-emoji">✊</div><div class="choice-name">Piedra</div></button>
@@ -940,7 +1240,7 @@ const AE = (() => {
 ═══════════════════════════════════════════ */
 const Settings = (() => {
   const KEY = 'rpsls_settings_v2';
-  let cfg = { theme:'dark', iconStyle:'hands', volBg:30, volSfx:65, muteBg:false, muteSfx:false, playerName:'', matchTarget:3 };
+  let cfg = { theme:'dark', iconStyle:'hands', volBg:30, volSfx:65, muteBg:false, muteSfx:false, playerName:'', matchTarget:3, difficulty:'normal' };
 
   const ICON_SETS = {
     hands:   { rock:'✊', paper:'🖐️', scissors:'✌️', lizard:'🦎', spock:'🖖' },
@@ -977,7 +1277,7 @@ const Settings = (() => {
   function applyTheme(t) {
     cfg.theme = t;
     document.documentElement.setAttribute('data-theme', t);
-    document.querySelectorAll('.theme-btn').forEach(b => b.classList.toggle('active', b.dataset.theme===t));
+    document.documentElement.setAttribute('data-theme', t); document.querySelectorAll('.theme-btn').forEach(b => b.classList.toggle('active', b.dataset.theme===t));
   }
 
   function applyIconStyle(style) {
@@ -1011,6 +1311,7 @@ const Settings = (() => {
     const niEl = document.getElementById('playerNameInput');
     if(niEl && niEl.value !== cfg.playerName) niEl.value = cfg.playerName || '';
     document.querySelectorAll('.match-target-btn').forEach(b=>b.classList.toggle('active',+b.dataset.val===(cfg.matchTarget||3)));
+    document.querySelectorAll('.diff-btn').forEach(b=>b.classList.toggle('active',b.dataset.diff===(cfg.difficulty||'normal')));
     const vbEl = document.getElementById('volBg'),  vsEl = document.getElementById('volSfx');
     if(vbEl) vbEl.value = AE.getVolBg();
     if(vsEl) vsEl.value = AE.getVolSfx();
@@ -1039,6 +1340,8 @@ const Settings = (() => {
     getPlayerName: () => cfg.playerName || '',
     setMatchTarget: (n) => { cfg.matchTarget=n; document.querySelectorAll('.match-target-btn').forEach(b=>b.classList.toggle('active',+b.dataset.val===n)); save(); },
     getMatchTarget: () => cfg.matchTarget || 3,
+    setDifficulty: (d) => { cfg.difficulty=d; document.querySelectorAll('.diff-btn').forEach(b=>b.classList.toggle('active',b.dataset.diff===d)); save(); },
+    getDifficulty: () => cfg.difficulty || 'normal',
   };
 })();
 
@@ -1203,10 +1506,14 @@ function enterOnlineGame(){
   document.getElementById("stripCode").textContent=roomCode;
   document.getElementById("stripOpponent").textContent="🟢 "+STR.opp_connected;
   document.getElementById("disconnectBtn").style.display="block";
+  const chatBtn=document.getElementById("chatToggleBtn");if(chatBtn)chatBtn.style.display='flex';
   showScreen("screenGame");
   AE.connected();
   showToast(STR.toast_connected);
   conn.send({type:"hello",name:myName});
+  StatsModule.incOnline();
+  AchievementsModule.check(StatsModule.get());
+  clearChat();
 }
 function setupConn(){
   let guestReady=false; // guest doesn't enter game until first message received
@@ -1256,6 +1563,9 @@ function handleMsg(data){
     opponentChoice=data.choice;
     if(myChoice){revealOnline();}else{startCountdown();}
   }else if(data.type==="match_end"){if(!matchOver){matchOver=true;const myWon=(data.winner==="p2");setTimeout(()=>showMatchEnd(myWon),900);if(myWon)AE.matchWin();else AE.matchLose();}
+  }else if(data.type==='chat'){appendChatMsg(data.text,false);
+  }else if(data.type==='rematch_req'){handleRematchReq();
+  }else if(data.type==='rematch_accept'){handleRematchAccept();
   }else if(data.type==="reset"){resetGameState();showToast(STR.toast_reset);}
 }
 function copyCode(){navigator.clipboard.writeText(document.getElementById("myRoomCode").textContent).then(()=>showToast(STR.toast_copied));}
@@ -1300,18 +1610,41 @@ function play(ch){
   if(mode==="solo"){if(busy)return;playSolo(ch);}
   else{if(busy&&!countdownTimer)return;playOnline(ch);}
 }
+function getAIMove(playerMove) {
+  const diff = Settings.getDifficulty();
+  const s = StatsModule.get();
+  if(diff === 'easy') return KEYS[Math.floor(Math.random()*KEYS.length)];
+  if(diff === 'normal') {
+    // 30% chance to counter player's last move
+    if(Math.random() < 0.3 && playerMove) {
+      // Find a move that beats playerMove
+      const counter = KEYS.find(k => RULES[k] && RULES[k][playerMove]);
+      if(counter) return counter;
+    }
+    return KEYS[Math.floor(Math.random()*KEYS.length)];
+  }
+  // impossible: find player's most-used move, counter it
+  const mc = s.moveCount;
+  const sorted = KEYS.slice().sort((a,b)=>(mc[b]||0)-(mc[a]||0));
+  for(const topMove of sorted) {
+    const counter = KEYS.find(k => RULES[k] && RULES[k][topMove]);
+    if(counter) return counter;
+  }
+  return KEYS[Math.floor(Math.random()*KEYS.length)];
+}
 function playSolo(ch){
   setBusy(true);AE.move();
+  StatsModule.get().moveCount[ch]=(StatsModule.get().moveCount[ch]||0)+1;
   const pd=document.getElementById("playerDisplay");
   pd.innerHTML=getIcon(ch);pd.dataset.choice=ch;anim("playerDisplay");
   document.getElementById("playerChoiceName").textContent=NAMES[ch];
   document.getElementById("cpuDisplay").textContent="🤔";document.getElementById("cpuDisplay").dataset.choice='';
   document.getElementById("cpuChoiceName").textContent="...";
   document.getElementById("resultBanner").className="result-banner";
-  startThinking();
+  startThinkingWithPhrase();
   setTimeout(()=>{
-    stopThinking();
-    const cpu=KEYS[Math.floor(Math.random()*KEYS.length)];
+    stopThinkingWithPhrase();
+    const cpu=getAIMove(ch);
     showResult(ch,cpu,true);setTimeout(()=>setBusy(false),700);
   },900);
 }
@@ -1335,6 +1668,7 @@ function playOnline(ch){
 function playOnlineCommit(ch){
   if(!conn||!conn.open)return;
   myChoice=ch;setBusy(true);
+  StatsModule.get().moveCount[ch]=(StatsModule.get().moveCount[ch]||0)+1;
   const pd=document.getElementById("playerDisplay");
   pd.innerHTML=getIcon(ch);pd.dataset.choice=ch;anim("playerDisplay");
   document.getElementById("playerChoiceName").textContent=NAMES[ch];
@@ -1356,9 +1690,39 @@ function showResult(p,cpu,isAI){
   document.getElementById("cpuChoiceName").textContent=NAMES[cpu];
   if(isAI){const cd=document.getElementById("cpuDisplay");cd.innerHTML=getIcon(cpu);cd.dataset.choice=cpu;anim("cpuDisplay");}
   let outcome,mainText,ruleText,quote="";
+  let comboPhrases=[];
+  const comboKey = (a,b) => a+'_'+b;
   if(p===cpu){outcome="draw";mainText=STR.r_draw;ruleText=STR.r_draw_rule;if(isAI)quote=Q_DRAW[Math.floor(Math.random()*Q_DRAW.length)];AE.draw();}
-  else if(RULES[p]&&RULES[p][cpu]){outcome="win";playerScore++;mainText=STR.r_win;ruleText=RULES[p][cpu];if(isAI)quote=Q_WIN[Math.floor(Math.random()*Q_WIN.length)];AE.win();triggerBazinga();}
-  else{outcome="lose";cpuScore++;mainText=STR.r_lose;ruleText=RULES[cpu][p];if(isAI)quote=Q_LOSE[Math.floor(Math.random()*Q_LOSE.length)];AE.lose();}
+  else if(RULES[p]&&RULES[p][cpu]){
+    outcome="win";playerScore++;mainText=STR.r_win;ruleText=RULES[p][cpu];
+    if(isAI)quote=Q_WIN[Math.floor(Math.random()*Q_WIN.length)];
+    comboPhrases=COMBO_PHRASES[comboKey(p,cpu)]||[];
+    AE.win();triggerBazinga();
+    if(mode==='solo'&&Settings.getDifficulty()==='hard') AchievementsModule.unlock('nemesis');
+  }
+  else{
+    outcome="lose";cpuScore++;mainText=STR.r_lose;ruleText=RULES[cpu][p];
+    if(isAI)quote=Q_LOSE[Math.floor(Math.random()*Q_LOSE.length)];
+    comboPhrases=COMBO_PHRASES[comboKey(cpu,p)]||[];
+    AE.lose();
+  }
+  // Track stats
+  if(mode!=='online'){
+    const diff=Settings.getDifficulty();
+    StatsModule.recordRound(outcome, p, diff);
+    AchievementsModule.check(StatsModule.get());
+  } else {
+    StatsModule.recordRound(outcome, p, 'normal');
+    AchievementsModule.check(StatsModule.get());
+  }
+  // All-5 achievement check
+  {const mc=StatsModule.get().moveCount;if(Object.keys(mc).length>=5&&Object.values(mc).every(v=>v>0))AchievementsModule.unlock('all_five');}
+  // Tournament mode
+  if(mode==='tournament'){
+    const mt=Settings.getMatchTarget();
+    if(playerScore>=mt){if(tournPhase==='sf1')setTimeout(()=>finalizeTournament(true),900);else if(tournPhase==='final')setTimeout(()=>finalizeFinal(true),900);}
+    else if(cpuScore>=mt){if(tournPhase==='sf1')setTimeout(()=>finalizeTournament(false),900);else if(tournPhase==='final')setTimeout(()=>finalizeFinal(false),900);}
+  }
   document.getElementById("playerScore").textContent=playerScore;
   document.getElementById("cpuScore").textContent=cpuScore;
   document.getElementById("roundNum").textContent=++round;
@@ -1374,7 +1738,7 @@ function showResult(p,cpu,isAI){
   }
   const b=document.getElementById("resultBanner");
   b.className="result-banner show "+outcome;
-  b.innerHTML="<div><div>"+mainText+"</div><span class='result-rule'>"+ruleText+"</span>"+(quote?"<span class='result-rule' style='color:#556;margin-top:3px;display:block;font-style:italic'>&#8220;"+quote+"&#8221;</span>":"")+"</div>";
+  const comboQuote=comboPhrases.length?comboPhrases[Math.floor(Math.random()*comboPhrases.length)]:'';b.innerHTML="<div><div>"+mainText+"</div><span class='result-rule'>"+ruleText+"</span>"+(comboQuote?"<span class='result-rule' style='color:var(--accent2);margin-top:2px;display:block'>"+comboQuote+"</span>":"")+(quote?"<span class='result-rule' style='color:#556;margin-top:3px;display:block;font-style:italic'>&#8220;"+quote+"&#8221;</span>":"")+"</div>";
 }
 function anim(id){const el=document.getElementById(id);el.classList.remove("pop-in");void el.offsetWidth;el.classList.add("pop-in");}
 function triggerBazinga(){const o=document.getElementById("bazingaOverlay");o.className="bazinga-overlay";void o.offsetWidth;o.className="bazinga-overlay show";setTimeout(()=>o.className="bazinga-overlay",1800);}
@@ -1392,10 +1756,19 @@ function showMatchEnd(playerWon){
   document.getElementById("matchEndVs").textContent = "vs "+opp;
   box.className = "match-end-box " + (playerWon ? "win-box" : "lose-box");
   overlay.classList.add("show");
-  if(playerWon) triggerBazinga();
+  if(playerWon){triggerBazinga();StatsModule.recordMatch(true);AchievementsModule.check(StatsModule.get());}
+  else{StatsModule.recordMatch(false);}
+  // Comeback check: won from 0-2
+  if(playerWon&&playerScore>=Settings.getMatchTarget()){
+    // Check if we were ever behind 0-2 is complex without tracking; skip for now
+  }
+  rematchState='idle';
+  const rmBtn=document.getElementById('matchEndRematchBtn');
+  if(rmBtn){rmBtn.style.display=mode==='online'?'block':'none';rmBtn.textContent='${t("rematch_btn",lang)}';rmBtn.disabled=false;}
 }
 function startNewMatch(){
   document.getElementById("matchEndOverlay").classList.remove("show");
+  const _cb=document.getElementById('chatToggleBtn');if(_cb)_cb.style.display='none';
   resetGameState();
   // Notify opponent too
   if(mode==="online"&&conn&&conn.open) conn.send({type:"reset"});
@@ -1418,6 +1791,493 @@ function goHome(){
 })();
 
 /* ── ANDROID BACK HANDLER ── */
+
+/* ═══════════════════════════════════════════════════════════════
+   STATS MODULE
+═══════════════════════════════════════════════════════════════ */
+const StatsModule = (() => {
+  const KEY = 'rpsls_stats_v1';
+  const def = () => ({wins:0,losses:0,draws:0,elo:1000,streak:0,bestStreak:0,
+    total:0,matchWins:0,matchLosses:0,moveCount:{rock:0,paper:0,scissors:0,lizard:0,spock:0},
+    chatSent:0,onlinePlayed:0,rematches:0,tournWon:0});
+  let data = def();
+
+  function load() {
+    try { const s=localStorage.getItem(KEY); if(s) data={...def(),...JSON.parse(s)}; } catch(e){}
+  }
+  function save() { try{localStorage.setItem(KEY,JSON.stringify(data));}catch(e){} }
+  function reset() { data=def(); save(); }
+
+  function eloChange(won, diff) {
+    // K-factor: 32 base, adjusted for difficulty
+    const K = diff==='hard'?40:diff==='normal'?28:16;
+    // Expected: assume opponent Elo ~ 1000 ± difficulty offset
+    const oppElo = diff==='hard'?1200:diff==='normal'?1000:800;
+    const expected = 1/(1+Math.pow(10,(oppElo-data.elo)/400));
+    const delta = Math.round(K*(( won?1:0)-expected));
+    data.elo = Math.max(0, data.elo + delta);
+    return delta;
+  }
+
+  function recordRound(outcome, move, diff='normal') {
+    data.total++;
+    data.moveCount[move] = (data.moveCount[move]||0)+1;
+    if(outcome==='win')  { data.wins++;  data.streak++; if(data.streak>data.bestStreak) data.bestStreak=data.streak; }
+    else if(outcome==='lose') { data.losses++; data.streak=0; }
+    else { data.draws++; }
+    if(outcome!=='draw') eloChange(outcome==='win', diff);
+    save();
+  }
+
+  function recordMatch(won) {
+    if(won) data.matchWins++; else data.matchLosses++;
+    save();
+  }
+
+  load();
+  return { get:()=>data, load, save, reset, recordRound, recordMatch,
+    incChat:()=>{data.chatSent++;save();},
+    incOnline:()=>{data.onlinePlayed++;save();},
+    incRematch:()=>{data.rematches++;save();},
+    setTournWon:()=>{data.tournWon++;save();} };
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   ACHIEVEMENTS MODULE
+═══════════════════════════════════════════════════════════════ */
+const AchievementsModule = (() => {
+  const KEY = 'rpsls_achieve_v1';
+  const DEFS = [{"id": "first_win", "icon": "\ud83e\udd47", "name": "First Victory", "desc": "Win your first round"}, {"id": "hat_trick", "icon": "\ud83c\udfa9", "name": "Hat Trick", "desc": "Win 3 rounds in a row"}, {"id": "domination", "icon": "\ud83d\udcaa", "name": "Domination", "desc": "Win a match 3-0 or 5-0"}, {"id": "spock_lover", "icon": "\ud83d\udd96", "name": "Spock Devotee", "desc": "Use Spock 10 times"}, {"id": "all_five", "icon": "\u270b", "name": "Jack of All Trades", "desc": "Use all 5 moves in one match"}, {"id": "nemesis", "icon": "\ud83e\udde0", "name": "Sheldon's Nemesis", "desc": "Beat Sheldon on Impossible difficulty"}, {"id": "comeback", "icon": "\ud83d\udd25", "name": "Comeback", "desc": "Win a match after being 0-2 down"}, {"id": "veteran", "icon": "\u2694\ufe0f", "name": "Veteran", "desc": "Play 50 total rounds"}, {"id": "legend", "icon": "\ud83d\udc51", "name": "Legend", "desc": "Win 10 matches"}, {"id": "connected", "icon": "\ud83c\udf10", "name": "Always Connected", "desc": "Play your first online match"}, {"id": "rematcher", "icon": "\ud83d\udd04", "name": "Rematcher", "desc": "Request a rematch"}, {"id": "chatterbox", "icon": "\ud83d\udcac", "name": "Chatterbox", "desc": "Send 5 chat messages"}, {"id": "champion", "icon": "\ud83c\udfc6", "name": "Champion", "desc": "Win the tournament"}, {"id": "sharpshooter", "icon": "\ud83c\udfaf", "name": "Sharpshooter", "desc": "Reach ELO above 1200"}, {"id": "big_bang", "icon": "\ud83d\udca5", "name": "Big Bang", "desc": "Unlock all other achievements"}];
+  let unlocked = new Set();
+  let toastTimer = null;
+
+  function load() {
+    try { const s=localStorage.getItem(KEY); if(s) unlocked=new Set(JSON.parse(s)); } catch(e){}
+  }
+  function save() { try{localStorage.setItem(KEY,JSON.stringify([...unlocked]));}catch(e){} }
+
+  function unlock(id) {
+    if(unlocked.has(id)) return;
+    unlocked.add(id);
+    save();
+    const def = DEFS.find(a=>a.id===id);
+    if(!def) return;
+    // Show toast
+    clearTimeout(toastTimer);
+    const el=document.getElementById('achieveUnlockToast');
+    document.getElementById('achieveUnlockIcon').textContent=def.icon;
+    document.getElementById('achieveUnlockName').textContent=def.name;
+    if(el){el.classList.add('show');toastTimer=setTimeout(()=>el.classList.remove('show'),3500);}
+    // Update grid
+    const card=document.getElementById('ach_'+id);
+    if(card){card.classList.remove('locked');card.classList.add('unlocked');}
+    updateAchieveProgress();
+    // Check big bang
+    if(id!=='big_bang'&&unlocked.size>=DEFS.length-1) setTimeout(()=>unlock('big_bang'),500);
+  }
+
+  function check(s) {
+    if(s.wins>=1) unlock('first_win');
+    if(s.streak>=3) unlock('hat_trick');
+    if(s.moveCount&&s.moveCount.spock>=10) unlock('spock_lover');
+    if(s.total>=50) unlock('veteran');
+    if(s.matchWins>=10) unlock('legend');
+    if(s.onlinePlayed>=1) unlock('connected');
+    if(s.rematches>=1) unlock('rematcher');
+    if(s.chatSent>=5) unlock('chatterbox');
+    if(s.tournWon>=1) unlock('champion');
+    if(s.elo>=1200) unlock('sharpshooter');
+  }
+
+  function updateAchieveProgress() {
+    const cnt=document.getElementById('achieveCount');
+    const bar=document.getElementById('achieveProgressFill');
+    if(cnt) cnt.textContent=unlocked.size+' / '+DEFS.length;
+    if(bar) bar.style.width=Math.round(unlocked.size/DEFS.length*100)+'%';
+  }
+
+  function renderGrid() {
+    DEFS.forEach(a=>{
+      const card=document.getElementById('ach_'+a.id);
+      if(!card) return;
+      card.classList.toggle('unlocked',unlocked.has(a.id));
+      card.classList.toggle('locked',!unlocked.has(a.id));
+    });
+    updateAchieveProgress();
+  }
+
+  load();
+  return { unlock, check, renderGrid, updateAchieveProgress, isUnlocked:(id)=>unlocked.has(id) };
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   THINKING PHRASES
+═══════════════════════════════════════════════════════════════ */
+const THINKING_PHRASES = ["C\u00e1lculo cu\u00e1ntico...", "Reprocesando 73 estrategias...", "Verificando las 5 variables...", "Algoritmo ejecut\u00e1ndose...", "An\u00e1lisis estad\u00edstico al 97%...", "Consultando teor\u00eda de juegos..."];
+const COMBO_PHRASES = {"scissors_paper": ["Elementare, mia cara forbice.", "Ovviamente. La carta \u00e8 vulnerabile."], "paper_rock": ["Sasso?! Prevedibile.", "La carta supera sempre il sasso. Base."], "rock_lizard": ["Sasso schiaccia lucertola. Classico.", "Nessuna sorpresa qui."], "lizard_spock": ["La lucertola avvelena Spock! Magnifico.", "Questo mi ha sorpreso. Minimamente."], "spock_scissors": ["Spock frantuma le forbici. Logico.", "Come previsto."], "scissors_lizard": ["Le forbici decapitano la lucertola.", "Brutale ma efficace."], "lizard_paper": ["La lucertola mangia la carta. Insolito.", "Bene giocato."], "paper_spock": ["La carta smentisce Spock! Sorprendente.", "Un risultato inaspettato."], "spock_rock": ["Spock vaporizza il sasso. Superiore.", "La fisica quantistica ha parlato."], "rock_scissors": ["Il sasso rompe le forbici. Prevedibile.", "Ancora una volta, il classico vince."]};
+let thinkingPhraseIdx = 0;
+let thinkingPhraseTimer = null;
+
+function startThinkingWithPhrase() {
+  const el=document.getElementById('thinking');
+  const span=el?.querySelector('span');
+  if(!el) return;
+  el.classList.add('show');
+  thinkingPhraseIdx=0;
+  if(span) span.textContent=THINKING_PHRASES[0];
+  thinkingPhraseTimer=setInterval(()=>{
+    thinkingPhraseIdx=(thinkingPhraseIdx+1)%THINKING_PHRASES.length;
+    if(span) span.textContent=THINKING_PHRASES[thinkingPhraseIdx];
+  },1100);
+}
+function stopThinkingWithPhrase() {
+  if(thinkingPhraseTimer){clearInterval(thinkingPhraseTimer);thinkingPhraseTimer=null;}
+  document.getElementById('thinking')?.classList.remove('show');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CHAT MODULE
+═══════════════════════════════════════════════════════════════ */
+let chatUnread = 0;
+function toggleChat() {
+  const p=document.getElementById('chatPanel');
+  if(!p) return;
+  const open=p.classList.toggle('open');
+  if(open){ chatUnread=0; updateChatBadge(); }
+}
+function updateChatBadge() {
+  const b=document.querySelector('.chat-badge');
+  if(b){ b.textContent=chatUnread; b.style.display=chatUnread>0?'inline-flex':'none'; }
+}
+function appendChatMsg(text, mine) {
+  const list=document.getElementById('chatMessages');
+  if(!list) return;
+  const who = mine ? 'Tú' : 'Opp.';
+  const div=document.createElement('div');
+  div.className='chat-msg '+(mine?'mine':'theirs');
+  div.innerHTML='<div class="chat-bubble">'+text.replace(/</g,'&lt;')+'</div>';
+  list.appendChild(div);
+  list.scrollTop=list.scrollHeight;
+  if(!mine){
+    chatUnread++;
+    const p=document.getElementById('chatPanel');
+    if(!p?.classList.contains('open')) updateChatBadge();
+  }
+}
+function sendChatMsg() {
+  const inp=document.getElementById('chatInput');
+  if(!inp||!conn||!conn.open) return;
+  const txt=inp.value.trim();
+  if(!txt) return;
+  conn.send({type:'chat',text:txt});
+  appendChatMsg(txt, true);
+  inp.value='';
+  StatsModule.incChat();
+  AchievementsModule.check(StatsModule.get());
+}
+function sendQuickChat(emoji) {
+  if(!conn||!conn.open) return;
+  conn.send({type:'chat',text:emoji});
+  appendChatMsg(emoji, true);
+  StatsModule.incChat();
+  AchievementsModule.check(StatsModule.get());
+}
+function clearChat() { const l=document.getElementById('chatMessages'); if(l) l.innerHTML=''; chatUnread=0; updateChatBadge(); }
+
+/* ═══════════════════════════════════════════════════════════════
+   QR CODE MODULE
+═══════════════════════════════════════════════════════════════ */
+let qrVisible=false, qrInstance=null;
+function toggleQR() {
+  const w=document.getElementById('qrWrapper');
+  if(!w) return;
+  qrVisible=!qrVisible;
+  w.style.display=qrVisible?'block':'none';
+  if(qrVisible && !qrInstance) {
+    const code=document.getElementById('myRoomCode')?.textContent||'';
+    const url='https://mauriziocoro.github.io/Rock-Paper-Scissors-Lizard-Spock/index_es.html?join='+code;
+    const canvas=document.getElementById('qrCanvas');
+    if(canvas&&typeof QRCode!=='undefined') {
+      canvas.innerHTML='';
+      qrInstance=new QRCode(canvas,{text:url,width:140,height:140,
+        colorDark:'#00d4ff',colorLight:'#111122',correctLevel:QRCode.CorrectLevel.M});
+    }
+  }
+}
+function resetQR() { qrVisible=false; qrInstance=null; const w=document.getElementById('qrWrapper'); if(w)w.style.display='none'; }
+
+// Auto-join from URL param
+(function checkUrlJoin(){
+  try{
+    const params=new URLSearchParams(window.location.search);
+    const joinCode=params.get('join');
+    if(joinCode&&joinCode.length>=4){
+      window.addEventListener('DOMContentLoaded',()=>{
+        setTimeout(()=>{
+          showLobby();
+          switchTab('join');
+          const inp=document.getElementById('joinCodeInput');
+          if(inp){inp.value=joinCode.toUpperCase();}
+          setTimeout(()=>joinRoom(),800);
+        },400);
+      });
+    }
+  }catch(e){}
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   SHARE RESULT (Canvas API)
+═══════════════════════════════════════════════════════════════ */
+function shareResult() {
+  const canvas=document.createElement('canvas');
+  canvas.width=600; canvas.height=340;
+  const ctx2=canvas.getContext('2d');
+  const won=document.getElementById('matchEndBox')?.classList.contains('win-box');
+  // Background
+  ctx2.fillStyle='#0a0a14';
+  ctx2.fillRect(0,0,600,340);
+  // Border
+  ctx2.strokeStyle=won?'#39ff14':'#ff2244';
+  ctx2.lineWidth=3;
+  ctx2.strokeRect(4,4,592,332);
+  // Title
+  ctx2.fillStyle=won?'#39ff14':'#ff2244';
+  ctx2.font='bold 36px Arial';
+  ctx2.textAlign='center';
+  ctx2.fillText(document.getElementById('matchEndTitle')?.textContent||'',300,80);
+  // Score
+  ctx2.fillStyle='#ffffff';
+  ctx2.font='bold 72px Arial';
+  ctx2.fillText(document.getElementById('matchEndScore')?.textContent||'0—0',300,190);
+  // VS label
+  ctx2.fillStyle='#7788aa';
+  ctx2.font='18px Arial';
+  ctx2.fillText(document.getElementById('matchEndVs')?.textContent||'',300,230);
+  // Branding
+  ctx2.fillStyle='#00d4ff';
+  ctx2.font='14px Arial';
+  ctx2.fillText('RPSLS BAZINGA · The Big Bang Theory Fan Game',300,300);
+  ctx2.fillStyle='#334455';
+  ctx2.font='12px Arial';
+  ctx2.fillText('https://mauriziocoro.github.io/Rock-Paper-Scissors-Lizard-Spock/',300,325);
+  // Download
+  const a=document.createElement('a');
+  a.href=canvas.toDataURL('image/png');
+  a.download='rpsls_result.png';
+  a.click();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   REMATCH MODULE
+═══════════════════════════════════════════════════════════════ */
+let rematchState='idle'; // idle | sent | received
+function requestRematch() {
+  if(!conn||!conn.open) return;
+  const btn=document.getElementById('matchEndRematchBtn');
+  if(rematchState==='received') {
+    // Accept
+    rematchState='idle';
+    if(btn){btn.textContent='🔄 ¿Revancha?';btn.disabled=false;}
+    conn.send({type:'rematch_accept'});
+    document.getElementById('matchEndOverlay')?.classList.remove('show');
+    startNewMatch();
+  } else {
+    rematchState='sent';
+    conn.send({type:'rematch_req'});
+    if(btn){btn.textContent='✓ Solicitud enviada...';btn.disabled=true;}
+    StatsModule.incRematch();
+    AchievementsModule.check(StatsModule.get());
+  }
+}
+function handleRematchReq() {
+  rematchState='received';
+  const btn=document.getElementById('matchEndRematchBtn');
+  if(btn){btn.textContent='✅ 🔄 ¡El adversario quiere la revancha!';btn.disabled=false;}
+  showToast('🔄 ¡El adversario quiere la revancha!',4000);
+}
+function handleRematchAccept() {
+  rematchState='idle';
+  document.getElementById('matchEndOverlay')?.classList.remove('show');
+  startNewMatch();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TUTORIAL MODULE
+═══════════════════════════════════════════════════════════════ */
+const TUT_STEPS = [{"icon": "\ud83d\udd96", "title": "\u00a1Bienvenido!", "text": "RPSLS Bazinga es el juego de Piedra Papel Tijeras Lagarto Spock inspirado en The Big Bang Theory. \u00a1Desaf\u00eda a Sheldon o juega online!"}, {"icon": "\ud83d\udcdc", "title": "Las 10 Reglas", "text": "Cada movimiento vence a otros 2. Piedra aplasta Lagarto y Tijeras. Spock vaporiza Piedra y Tijeras. \u00a1Aprende las 10 combinaciones!"}, {"icon": "\ud83e\udd16", "title": "VS Sheldon IA", "text": "Tres niveles de dificultad: F\u00e1cil (aleatorio), Normal (aprende tu estilo), \u00a1Imposible (analiza tus \u00faltimos movimientos)!"}, {"icon": "\ud83c\udf10", "title": "Online 1 vs 1", "text": "Crea una sala, comparte el c\u00f3digo (\u00a1o el QR!) con un amigo. Tienes 5 segundos para responder cuando el adversario ya ha elegido."}, {"icon": "\u2699\ufe0f", "title": "\u00a1Personaliza!", "text": "Cambia tema, estilo de iconos, volumen y dificultad en el panel \u2699\ufe0f. \u00a1Sigue tus estad\u00edsticas y logros!"}];
+let tutStep=0;
+function openTutorial() {
+  tutStep=0;
+  renderTutStep();
+  document.getElementById('tutorialOverlay')?.classList.add('show');
+}
+function closeTutorial() {
+  document.getElementById('tutorialOverlay')?.classList.remove('show');
+  try{localStorage.setItem('rpsls_tut_done','1');}catch(e){}
+}
+function tutNext() {
+  tutStep++;
+  if(tutStep>=TUT_STEPS.length){closeTutorial();return;}
+  renderTutStep();
+}
+function renderTutStep() {
+  const s=TUT_STEPS[tutStep];
+  document.getElementById('tutIcon').textContent=s.icon;
+  document.getElementById('tutTitle').textContent=s.title;
+  document.getElementById('tutText').textContent=s.text;
+  const nextBtn=document.getElementById('tutNextBtn');
+  if(nextBtn) nextBtn.textContent=tutStep===TUT_STEPS.length-1?'¡Jugar! 🖖':'Siguiente →';
+  // Dots
+  const dots=document.getElementById('tutDots');
+  if(dots){dots.innerHTML=TUT_STEPS.map((_,i)=>'<div class="tutorial-dot'+(i===tutStep?' active':'')+'"></div>').join('');}
+  // Re-trigger bounce
+  const icon=document.getElementById('tutIcon');
+  if(icon){icon.style.animation='none';void icon.offsetWidth;icon.style.animation='';}
+}
+// Check first launch
+window.addEventListener('DOMContentLoaded',()=>{
+  try{
+    if(!localStorage.getItem('rpsls_tut_done')) setTimeout(openTutorial,600);
+  }catch(e){}
+});
+
+/* ═══════════════════════════════════════════════════════════════
+   TOURNAMENT MODULE
+═══════════════════════════════════════════════════════════════ */
+const Tournament = (() => {
+  const KEYS=['rock','paper','scissors','lizard','spock'];
+  const AI_NAMES=['Howard','Leonard','Sheldon'];
+  const RULES={scissors:{paper:1,lizard:1},paper:{rock:1,spock:1},rock:{lizard:1,scissors:1},lizard:{spock:1,paper:1},spock:{scissors:1,rock:1}};
+  function aiMove(){return KEYS[Math.floor(Math.random()*5)];}
+  function beats(a,b){return RULES[a]&&RULES[a][b];}
+  function simMatch(target){
+    let a=0,b=0;
+    while(a<target&&b<target){const m1=aiMove(),m2=aiMove();if(beats(m1,m2))a++;else if(beats(m2,m1))b++;}
+    return a>=target?0:1;
+  }
+  let playerName='',sf2Winner='';
+  function start(pName,matchTarget){
+    playerName=pName||'You';
+    // SF2: simulate AI vs AI
+    const sf2WIdx=simMatch(matchTarget);
+    sf2Winner=AI_NAMES[sf2WIdx+1];
+    // Update bracket display
+    document.getElementById('sf1p1name').textContent=playerName;
+    document.getElementById('sf1p2name').textContent=AI_NAMES[0];
+    document.getElementById('sf2p1name').textContent=AI_NAMES[1];
+    document.getElementById('sf2p2name').textContent=AI_NAMES[2];
+    document.getElementById('fp2name').textContent='TBD';
+    document.getElementById('fp1name').textContent='TBD';
+    // Animate SF2 result
+    setTimeout(()=>{
+      const w=document.getElementById('sf2p'+(sf2WIdx+1));
+      const l=document.getElementById('sf2p'+(sf2WIdx===0?2:1));
+      if(w)w.classList.add('winner');if(l)l.classList.add('loser');
+      document.getElementById('fp2name').textContent=sf2Winner;
+      AE.connected();
+    },1200);
+    return sf2Winner;
+  }
+  return {start, getSF2Winner:()=>sf2Winner, getAINames:()=>AI_NAMES};
+})();
+
+let tournState='idle',tournPhase='sf1',tournTarget=3,tournPlayerScore=0,tournAIScore=0,tournAIName='';
+function openTournament(){openStats();showScreen('screenTournament');}
+function startTournament(){
+  if(tournState==='running') return;
+  tournState='running';
+  tournPhase='sf1';
+  tournPlayerScore=0; tournAIScore=0;
+  const pName=Settings.getPlayerName()||'You';
+  tournTarget=Settings.getMatchTarget();
+  tournAIName=Tournament.start(pName,tournTarget);
+  document.getElementById('tournStartBtn').disabled=true;
+  document.getElementById('sf1p1').classList.add('playing');
+  document.getElementById('fp1name').textContent=pName;
+  // Switch to game screen for SF1 — solo mode vs easy AI
+  mode='tournament'; resetGameState();
+  document.getElementById('p1Name').textContent=pName;
+  document.getElementById('p2Name').textContent='Howard';
+  document.getElementById('p2Card').className='score-card cpu-card';
+  document.getElementById('p2ArenaLabel').textContent='Howard';
+  document.getElementById('cpuDisplay').className='arena-choice cpu-aura';
+  document.getElementById('onlineStrip').classList.remove('show');
+  document.getElementById('disconnectBtn').style.display='none';
+  showScreen('screenGame');
+}
+function finalizeTournament(playerWon){
+  tournState='idle';
+  const pName=Settings.getPlayerName()||'You';
+  const sf1WinnerName=playerWon?pName:'Howard';
+  // Update SF1 in bracket
+  // Final: sf1Winner vs sf2Winner
+  if(playerWon){
+    document.getElementById('fp1name').textContent=sf1WinnerName;
+    // Final match — switch to game vs sf2Winner
+    tournPhase='final'; tournPlayerScore=0; tournAIScore=0;
+    tournAIName=Tournament.getSF2Winner();
+    mode='tournament'; resetGameState();
+    document.getElementById('p2Name').textContent=tournAIName;
+    document.getElementById('p2ArenaLabel').textContent=tournAIName;
+    showScreen('screenGame');
+    showToast('🏆 '+'Final'+': vs '+tournAIName, 3000);
+  } else {
+    // Eliminated
+    showScreen('screenTournament');
+    const banner=document.getElementById('tournResultBanner');
+    if(banner){banner.textContent='Eliminado en' + ' ' + 'Semifinal' + ' 1';banner.classList.add('show');}
+    document.getElementById('tournStartBtn').disabled=false;
+    tournState='idle';
+  }
+}
+function finalizeFinal(playerWon){
+  tournState='idle';
+  showScreen('screenTournament');
+  const banner=document.getElementById('tournResultBanner');
+  const pName=Settings.getPlayerName()||'You';
+  if(playerWon){
+    if(banner){banner.textContent='🏆 ¡Campeón! '+pName+'!';banner.classList.add('show');}
+    StatsModule.setTournWon();
+    AchievementsModule.check(StatsModule.get());
+    AchievementsModule.unlock('champion');
+    AE.matchWin();
+    triggerBazinga();
+  } else {
+    if(banner){banner.textContent='Eliminado en' + ' ' + 'Final';banner.classList.add('show');}
+    AE.matchLose();
+  }
+  document.getElementById('tournStartBtn').disabled=false;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   STATS SCREEN RENDERER
+═══════════════════════════════════════════════════════════════ */
+const MOVE_EMOJIS={rock:'✊',paper:'🖐️',scissors:'✌️',lizard:'🦎',spock:'🖖'};
+const MOVE_KEYS=['rock','paper','scissors','lizard','spock'];
+function renderStats() {
+  const s=StatsModule.get();
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  set('statsElo',s.elo);
+  const delta=s.elo-1000;
+  const trend=document.getElementById('statsEloTrend');
+  if(trend){trend.textContent=(delta>=0?'+':'')+delta;trend.style.color=delta>=0?'var(--green)':'var(--red)';}
+  set('statsWins',s.wins); set('statsLosses',s.losses); set('statsDraws',s.draws);
+  set('statsStreak',s.streak); set('statsBestStreak',s.bestStreak);
+  set('statsTotal',s.total); set('statsMatchWins',s.matchWins);
+  // Move bars
+  const bars=document.getElementById('moveBars');
+  if(bars){
+    const max=Math.max(1,...MOVE_KEYS.map(k=>s.moveCount[k]||0));
+    bars.innerHTML=MOVE_KEYS.map(k=>{
+      const cnt=s.moveCount[k]||0;
+      const pct=Math.round(cnt/max*100);
+      return '<div class="move-bar-row"><div class="move-bar-emoji">'+MOVE_EMOJIS[k]+'</div><div class="move-bar-track"><div class="move-bar-fill" style="width:'+pct+'%"></div></div><div class="move-bar-count">'+cnt+'</div></div>';
+    }).join('');
+  }
+}
+function openStats()   { renderStats(); showScreen('screenStats'); }
+function openAchievements() { AchievementsModule.renderGrid(); showScreen('screenAchievements'); }
+
 function androidBack(){
   // 0. Match end overlay open → treat as new match / menu
   const meo=document.getElementById("matchEndOverlay");
@@ -1433,14 +2293,19 @@ function androidBack(){
     if(window.AndroidBridge) AndroidBridge.backHandled();
     return;
   }
-  // 2. Game screen active → go back to menu
+  // 2. Stats / Achievements / Tournament → back to menu
+  for(const sid of ['screenStats','screenAchievements','screenTournament']){
+    const el=document.getElementById(sid);
+    if(el&&el.classList.contains('active')){showScreen('screenMenu');if(window.AndroidBridge)AndroidBridge.backHandled();return;}
+  }
+  // 3. Game screen active → go back to menu
   const gameScreen=document.getElementById("screenGame");
   if(gameScreen&&gameScreen.classList.contains("active")){
     goHome();
     if(window.AndroidBridge) AndroidBridge.backHandled();
     return;
   }
-  // 3. Lobby screen active → go back to menu
+  // 4. Lobby screen active → go back to menu
   const lobbyScreen=document.getElementById("screenLobby");
   if(lobbyScreen&&lobbyScreen.classList.contains("active")){
     goHome();
@@ -1450,5 +2315,196 @@ function androidBack(){
   // 4. Menu screen → let Android handle (will exit or go to lang picker)
 }
 </script>
+<!-- SCREEN: STATS -->
+<div class="screen" id="screenStats">
+  <div class="container">
+    <button class="back-btn" onclick="showScreen('screenMenu')">← [back_short]</button>
+    <div class="header" style="padding:8px 0 16px">
+      <div class="logo-title" style="font-size:clamp(18px,4vw,28px)">📊 ESTADÍSTICAS</div>
+    </div>
+    <div class="stats-hero">
+      <div class="stats-elo-label">ELO Rating</div>
+      <div class="stats-elo-val" id="statsElo">1000</div>
+      <div class="stats-elo-trend" id="statsEloTrend"></div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card stat-win">
+        <div class="stat-card-val" id="statsWins">0</div>
+        <div class="stat-card-lbl">Victorias</div>
+      </div>
+      <div class="stat-card stat-loss">
+        <div class="stat-card-val" id="statsLosses">0</div>
+        <div class="stat-card-lbl">Derrotas</div>
+      </div>
+      <div class="stat-card stat-draw">
+        <div class="stat-card-val" id="statsDraws">0</div>
+        <div class="stat-card-lbl">Empates</div>
+      </div>
+    </div>
+    <div class="stats-section-title">Movimiento fav.</div>
+    <div class="move-bars" id="moveBars"></div>
+    <div class="stats-extra-grid">
+      <div class="stats-extra-card">
+        <div class="stats-extra-icon">🔥</div>
+        <div>
+          <div class="stats-extra-val" id="statsStreak">0</div>
+          <div class="stats-extra-lbl">Racha actual</div>
+        </div>
+      </div>
+      <div class="stats-extra-card">
+        <div class="stats-extra-icon">⭐</div>
+        <div>
+          <div class="stats-extra-val" id="statsBestStreak">0</div>
+          <div class="stats-extra-lbl">Mejor racha</div>
+        </div>
+      </div>
+      <div class="stats-extra-card">
+        <div class="stats-extra-icon">⚔️</div>
+        <div>
+          <div class="stats-extra-val" id="statsTotal">0</div>
+          <div class="stats-extra-lbl">Rondas totales</div>
+        </div>
+      </div>
+      <div class="stats-extra-card">
+        <div class="stats-extra-icon">🏆</div>
+        <div>
+          <div class="stats-extra-val" id="statsMatchWins">0</div>
+          <div class="stats-extra-lbl">Partidas ganadas</div>
+        </div>
+      </div>
+    </div>
+    <button class="stats-reset-btn" onclick="StatsModule.reset();renderStats()">↺ Reiniciar stats</button>
+    <div class="footer" style="margin-top:20px">Made with 💙 for fans of <span>The Big Bang Theory</span> · BAZINGA!</div>
+  </div>
+</div>
+
+<!-- SCREEN: ACHIEVEMENTS -->
+<div class="screen" id="screenAchievements">
+  <div class="container">
+    <button class="back-btn" onclick="showScreen('screenMenu')">← [back_short]</button>
+    <div class="header" style="padding:8px 0 16px">
+      <div class="logo-title" style="font-size:clamp(18px,4vw,28px)">🏅 LOGROS</div>
+    </div>
+    <div id="achieveProgressWrap" style="margin-bottom:14px">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--subtext);margin-bottom:6px" id="achieveCount">0 / 15</div>
+      <div class="achieve-progress-bar"><div class="achieve-progress-fill" id="achieveProgressFill" style="width:0%"></div></div>
+    </div>
+    <div class="achieve-grid" id="achieveGrid"><div class="achieve-card locked" id="ach_first_win">
+  <div class="achieve-icon">🥇</div>
+  <div class="achieve-name">First Victory</div>
+  <div class="achieve-desc">Win your first round</div>
+</div>
+<div class="achieve-card locked" id="ach_hat_trick">
+  <div class="achieve-icon">🎩</div>
+  <div class="achieve-name">Hat Trick</div>
+  <div class="achieve-desc">Win 3 rounds in a row</div>
+</div>
+<div class="achieve-card locked" id="ach_domination">
+  <div class="achieve-icon">💪</div>
+  <div class="achieve-name">Domination</div>
+  <div class="achieve-desc">Win a match 3-0 or 5-0</div>
+</div>
+<div class="achieve-card locked" id="ach_spock_lover">
+  <div class="achieve-icon">🖖</div>
+  <div class="achieve-name">Spock Devotee</div>
+  <div class="achieve-desc">Use Spock 10 times</div>
+</div>
+<div class="achieve-card locked" id="ach_all_five">
+  <div class="achieve-icon">✋</div>
+  <div class="achieve-name">Jack of All Trades</div>
+  <div class="achieve-desc">Use all 5 moves in one match</div>
+</div>
+<div class="achieve-card locked" id="ach_nemesis">
+  <div class="achieve-icon">🧠</div>
+  <div class="achieve-name">Sheldon's Nemesis</div>
+  <div class="achieve-desc">Beat Sheldon on Impossible difficulty</div>
+</div>
+<div class="achieve-card locked" id="ach_comeback">
+  <div class="achieve-icon">🔥</div>
+  <div class="achieve-name">Comeback</div>
+  <div class="achieve-desc">Win a match after being 0-2 down</div>
+</div>
+<div class="achieve-card locked" id="ach_veteran">
+  <div class="achieve-icon">⚔️</div>
+  <div class="achieve-name">Veteran</div>
+  <div class="achieve-desc">Play 50 total rounds</div>
+</div>
+<div class="achieve-card locked" id="ach_legend">
+  <div class="achieve-icon">👑</div>
+  <div class="achieve-name">Legend</div>
+  <div class="achieve-desc">Win 10 matches</div>
+</div>
+<div class="achieve-card locked" id="ach_connected">
+  <div class="achieve-icon">🌐</div>
+  <div class="achieve-name">Always Connected</div>
+  <div class="achieve-desc">Play your first online match</div>
+</div>
+<div class="achieve-card locked" id="ach_rematcher">
+  <div class="achieve-icon">🔄</div>
+  <div class="achieve-name">Rematcher</div>
+  <div class="achieve-desc">Request a rematch</div>
+</div>
+<div class="achieve-card locked" id="ach_chatterbox">
+  <div class="achieve-icon">💬</div>
+  <div class="achieve-name">Chatterbox</div>
+  <div class="achieve-desc">Send 5 chat messages</div>
+</div>
+<div class="achieve-card locked" id="ach_champion">
+  <div class="achieve-icon">🏆</div>
+  <div class="achieve-name">Champion</div>
+  <div class="achieve-desc">Win the tournament</div>
+</div>
+<div class="achieve-card locked" id="ach_sharpshooter">
+  <div class="achieve-icon">🎯</div>
+  <div class="achieve-name">Sharpshooter</div>
+  <div class="achieve-desc">Reach ELO above 1200</div>
+</div>
+<div class="achieve-card locked" id="ach_big_bang">
+  <div class="achieve-icon">💥</div>
+  <div class="achieve-name">Big Bang</div>
+  <div class="achieve-desc">Unlock all other achievements</div>
+</div></div>
+    <div class="footer" style="margin-top:8px">Made with 💙 for fans of <span>The Big Bang Theory</span> · BAZINGA!</div>
+  </div>
+</div>
+
+<!-- SCREEN: TOURNAMENT -->
+<div class="screen" id="screenTournament">
+  <div class="container">
+    <button class="back-btn" onclick="showScreen('screenMenu')" id="tournBackBtn">← [back_short]</button>
+    <div class="header" style="padding:8px 0 14px">
+      <div class="logo-title" style="font-size:clamp(18px,4vw,28px)">🏆 TORNEO</div>
+    </div>
+    <button class="tourn-start-btn" id="tournStartBtn" onclick="startTournament()">▶ Iniciar torneo</button>
+    <div class="bracket" id="tournBracket">
+      <div>
+        <div class="bracket-round-label">Semifinal 1</div>
+        <div class="bracket-match" id="sf1Match">
+          <div class="bracket-player" id="sf1p1"><span class="bracket-player-name" id="sf1p1name">You</span><span class="bracket-player-score" id="sf1p1score">-</span></div>
+          <div class="bracket-vs">VS</div>
+          <div class="bracket-player" id="sf1p2"><span class="bracket-player-name" id="sf1p2name">Howard</span><span class="bracket-player-score" id="sf1p2score">-</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="bracket-round-label">Semifinal 2</div>
+        <div class="bracket-match" id="sf2Match">
+          <div class="bracket-player" id="sf2p1"><span class="bracket-player-name" id="sf2p1name">Leonard</span><span class="bracket-player-score" id="sf2p1score">-</span></div>
+          <div class="bracket-vs">VS</div>
+          <div class="bracket-player" id="sf2p2"><span class="bracket-player-name" id="sf2p2name">Sheldon</span><span class="bracket-player-score" id="sf2p2score">-</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="bracket-round-label">Final</div>
+        <div class="bracket-match" id="finalMatch">
+          <div class="bracket-player" id="fp1"><span class="bracket-player-name" id="fp1name">TBD</span><span class="bracket-player-score" id="fp1score">-</span></div>
+          <div class="bracket-vs">VS</div>
+          <div class="bracket-player" id="fp2"><span class="bracket-player-name" id="fp2name">TBD</span><span class="bracket-player-score" id="fp2score">-</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="tourn-result-banner" id="tournResultBanner"></div>
+    <div class="footer" style="margin-top:14px">Made with 💙 for fans of <span>The Big Bang Theory</span> · BAZINGA!</div>
+  </div>
+</div>
 </body>
 </html>
